@@ -3,91 +3,45 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>ELearn - Ingreso</title>
-    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elearn - Iniciar Sesión</title>
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="/assets/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
-    <!-- CONTENEDOR PRINCIPAL -->
     <div class="container-principal">
-        <!-- Sección Izquierda -->
         <div class="left-section">
             <h1>Aprende con <span style="font-size: 1.8em;">ELearn</span></h1>
             <p>Cursos reales con expertos y contenido gratuito.</p>
         </div>
-
-        <!-- Sección Derecha (Formulario de Ingreso) -->
         <div class="right-section">
             <h1>¡Bienvenido!</h1>
             <h2>Ingreso</h2>
             <p>Empieza tus clases al iniciar sesión.</p>
-
-            <!-- Formulario de Login -->
-            <form method="post" action="/auth/login">
-                <div class="form-group mb-3">
-                    <label for="email">Correo electrónico</label>
-                    <input type="email" name="email" id="email" class="form-control" 
-                        placeholder="correo@ejemplo.com" required>
+            <div class="body">
+                <form method="post" action="/auth/login">
+                    <div class="mb-2">
+                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <input type="email" id="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" id="password" name="password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+                </form>
+                <div class="text-center mt-3">
+                    <span>¿No tienes cuenta?</span>
+                    <a href="/auth/registro">Regístrate aquí</a>
                 </div>
-
-                <div class="form-group mb-3">
-                    <label for="password">Contraseña</label>
-                    <input type="password" name="password" id="password" class="form-control" 
-                        placeholder="Tu contraseña" required>
-                </div>
-
-                <button type="submit" class="btn btn-primary w-100">Ingresar</button>
-            </form>
-
-            <div class="text-center mt-3">
-                <span>¿No tienes cuenta?</span>
-                <a href="/auth/registro">Regístrate</a>
             </div>
         </div>
     </div>
-
-    <!-- TOASTS (éxito y error) -->
-    <div class="position-fixed top-0 end-0 p-3" style="z-index: 2000;">
-        <!-- Toast de ÉXITO -->
-        <div id="successToast" class="toast align-items-center text-bg-success border-0 mb-2" role="alert"
-            aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    ¡Has iniciado sesión exitosamente!
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                    aria-label="Close"></button>
-            </div>
-        </div>
-
-        <!-- Toast de ERROR -->
-        <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive"
-            aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    ¡Error al iniciar sesión! Revisa tus datos.
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                    aria-label="Close"></button>
-            </div>
-        </div>
     </div>
-
-    <!-- Scripts. -->
-    <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="/assets/js/verificar-query.js"></script>
-    <script>
-    // Validación de RUT chileno
-    document.getElementById('rut').addEventListener('input', function(e) {
-        let rut = e.target.value.replace(/[^0-9kK-]/g, '');
-        if(rut.length > 1) {
-            rut = rut.slice(0, -1) + '-' + rut.slice(-1);
-        }
-        e.target.value = rut;
-    });
-    </script>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

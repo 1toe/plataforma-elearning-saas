@@ -1,8 +1,6 @@
 const AuthController = require("../controllers/AuthController");
 const render = require("../utils/render");
 
-// ¿Que hace elarchivo?
-// El archivo completo hace referencia a las rutas de la aplicación, en este caso se encarga de manejar las rutas de inicio, autenticación y perfil.
 
 const rutas = (req, res) => {
     try {
