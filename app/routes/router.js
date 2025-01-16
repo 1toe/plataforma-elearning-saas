@@ -1,5 +1,6 @@
 const AuthController = require("../controllers/AuthController");
 const render = require("../utils/render");
+const cookie = require("cookie"); // Importar el módulo de cookies
 
 const rutas = (req, res) => {
     try {
@@ -21,7 +22,7 @@ const rutas = (req, res) => {
         if (req.url === "/logout" && req.method === "GET") {
             res.writeHead(302, {
                 Location: "/auth/login",
-                "Set-Cookie": "loggedIn=false; HttpOnly", // Eliminar sesión
+                "Set-Cookie": "loggedIn=false; Path=/; HttpOnly", // Elimina la autenticación
             });
             res.end();
             return;
@@ -29,10 +30,15 @@ const rutas = (req, res) => {
 
         // Ruta raíz (inicio)
         if (req.url === "/" && req.method === "GET") {
-            const isAuthenticated = req.headers.cookie && req.headers.cookie.includes("loggedIn=true");
+            const cookies = cookie.parse(req.headers.cookie || ""); // Parsear las cookies
+            const isAuthenticated = cookies.loggedIn === "true"; // Verificar si el usuario está autenticado
+
             console.log("isAuthenticated:", isAuthenticated); // Registro de depuración
+
+            // Renderizar la vista de inicio con el navbar dinámico
+            const html = render("index.html", { title: "Inicio", dynamic_nav: getNavbar(isAuthenticated) });
             res.writeHead(200, { "Content-Type": "text/html" });
-            res.end(render("index.html", { title: "Inicio" }, isAuthenticated));
+            res.end(html);
             return;
         }
 
@@ -47,5 +53,24 @@ const rutas = (req, res) => {
         }
     }
 };
+
+// Navbar dinámico según autenticación
+function getNavbar(isAuthenticated) {
+    if (isAuthenticated) {
+        // Navbar para usuarios autenticados
+        return `
+            <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link" href="/cursos">Cursos</a></li>
+            <li class="nav-item"><a class="nav-link" href="/logout">Salir</a></li>
+        `;
+    } else {
+        // Navbar para invitados (no autenticados)
+        return `
+            <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link" href="/auth/login">Ingresar</a></li>
+            <li class="nav-item"><a class="nav-link" href="/auth/registro">Registrar</a></li>
+        `;
+    }
+}
 
 module.exports = rutas;

@@ -12,23 +12,23 @@
                     <form method="post" action="/auth/registro">
                         <div class="mb-3">
                             <label for="rut" class="form-label">RUT</label>
-                            <input type="text" id="rut" name="rut" class="form-control" required>
+                            <input type="text" id="rut" name="rut" class="form-control" required autocomplete="username">
                         </div>
                         <div class="mb-3">
                             <label for="nombre" class="form-label">Nombre</label>
-                            <input type="text" id="nombre" name="nombre" class="form-control" required>
+                            <input type="text" id="nombre" name="nombre" class="form-control" required autocomplete="given-name">
                         </div>
                         <div class="mb-3">
                             <label for="apellido" class="form-label">Apellido</label>
-                            <input type="text" id="apellido" name="apellido" class="form-control" required>
+                            <input type="text" id="apellido" name="apellido" class="form-control" required autocomplete="family-name">
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Correo Electrónico</label>
-                            <input type="email" id="email" name="email" class="form-control" required>
+                            <input type="email" id="email" name="email" class="form-control" required autocomplete="email">
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Contraseña</label>
-                            <input type="password" id="password" name="password" class="form-control" required>
+                            <input type="password" id="password" name="password" class="form-control" required autocomplete="new-password">
                         </div>
                         <button type="submit" class="btn btn-success w-100">Registrarse</button>
                     </form>

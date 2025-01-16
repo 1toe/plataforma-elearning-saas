@@ -127,7 +127,7 @@ class AuthController {
                     // Iniciar sesión y redirigir al inicio
                     res.writeHead(302, {
                         Location: "/",
-                        "Set-Cookie": "loggedIn=true; HttpOnly",
+                        "Set-Cookie": "loggedIn=true; Path=/; HttpOnly", // Configurar Path global
                     });
                     res.end();
                 } else {
