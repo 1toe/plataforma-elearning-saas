@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Elearn - Registro</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+    <div class="container-principal">
+        <!-- Sección Izquierda -->
+        <div class="left-section">
+            <h1>Aprende con <span style="font-size: 1.8em;">ELearn</span></h1>
+            <p>Cursos reales con expertos y contenido gratuito.</p>
+        </div>
+
+        <!-- Sección Derecha (Formulario de Registro) -->
+        <div class="right-section">
+            <h1>¡Bienvenido!</h1>
+            <h2>Regístrate en ELearn</h2>
+
+            <form method="post" action="/auth/registro">
+                <div class="form-group mb-3">
+                    <label for="rut">RUT</label>
+                    <input type="text" name="rut" id="rut" class="form-control" 
+                        placeholder="12345678-9" pattern="\d{7,8}-[\d|k|K]{1}" required>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" name="nombre" id="nombre" class="form-control" 
+                            placeholder="Nombre" required>
+                    </div>
+                    <div class="col">
+                        <label for="apellido">Apellido</label>
+                        <input type="text" name="apellido" id="apellido" class="form-control" 
+                            placeholder="Apellido" required>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="email">Correo electrónico</label>
+                    <input type="email" name="email" id="email" class="form-control" 
+                        placeholder="correo@ejemplo.com" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="password">Contraseña</label>
+                    <input type="password" name="password" id="password" class="form-control" 
+                        placeholder="Mínimo 6 caracteres" minlength="6" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="tipo_usuario">Tipo de Usuario</label>
+                    <select name="tipo_usuario" id="tipo_usuario" class="form-select" required>
+                        <option value="estudiante">Estudiante</option>
+                        <option value="docente">Docente</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Registrarme</button>
+            </form>
+
+            <div class="text-center mt-3">
+                <span>¿Ya tienes cuenta?</span>
+                <a href="/auth/login">Inicia Sesión</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast error -->
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 2000;">
+        <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    ¡Hubo un error al registrarse! Verifica tus datos.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/assets/js/verificar-ruta.js"></script>
+</body>
+
+</html>
