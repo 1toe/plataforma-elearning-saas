@@ -2,6 +2,25 @@ const Usuario = require("../models/User");
 const { validateEmail, validatePassword, validateRUT, validateLogin } = require("../utils/validators");
 const render = require("../utils/render");
 
+/**
+ * AuthController es una clase que maneja la autenticación de usuarios en la aplicación.
+ * Proporciona métodos estáticos para mostrar formularios de registro e inicio de sesión,
+ * procesar los datos enviados por los usuarios y manejar la lógica de autenticación.
+ * 
+ * Métodos:
+ * - getRegister(req, res): Muestra el formulario de registro.
+ * - postRegister(req, res): Procesa el registro de un nuevo usuario, validando los datos y creando el usuario en la base de datos.
+ * - getLogin(req, res): Muestra el formulario de inicio de sesión.
+ * - postLogin(req, res): Procesa el inicio de sesión de un usuario, validando las credenciales y estableciendo una sesión.
+ * - getProfile(req, res): Muestra la página de perfil del usuario.
+ * 
+ * Dependencias:
+ * - Rutas: Las rutas deben estar configuradas para llamar a estos métodos según corresponda.
+ * - Funciones de validación: validateRUT, validateEmail, validatePassword, validateLogin.
+ * - Funciones de renderizado: render.
+ * - Modelo de Usuario: Usuario, que debe tener métodos como create y findByEmail.
+ */
+
 class AuthController {
 
     // Mostrar el formulario de registro
@@ -23,7 +42,7 @@ class AuthController {
                 apellido: formData.get("apellido"),
                 correo: formData.get("email"),
                 contrasenia: formData.get("password"),
-                tipo_usuario: "estudiante", // Por defecto, agregar opción "estudiante"
+                tipo_usuario: "estudiante", // Por defecto, asigné la iopcióm "estudiante", después hay que configurarla según un formulario pára docentes.
             };
 
             // Validaciones
@@ -152,7 +171,7 @@ class AuthController {
         });
     }
 
-    // Mostrar la página de perfil
+    // Mostrar la página de perfil (ToDo!!!)
     static getProfile(req, res) {
         const html = render("perfil.html", { title: "Perfil de Usuario" });
         res.writeHead(200, { "Content-Type": "text/html" });

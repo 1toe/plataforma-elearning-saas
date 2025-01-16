@@ -18,7 +18,7 @@ function validateLogin(email, password) {
         return { isValid: false, error: "El correo electrónico no es válido." };
     }
     if (!validatePassword(password)) {
-        return { isValid: false, error: "La contraseña debe tener al menos 6 caracteres." };
+        return { isValid: false, error: "La contraseña debe tener al menos 1 caracteres." };
     }
     return { isValid: true, error: "" };
 }

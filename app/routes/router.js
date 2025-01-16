@@ -1,13 +1,14 @@
 const AuthController = require("../controllers/AuthController");
 const render = require("../utils/render");
 const cookie = require("cookie"); // Importar el módulo de cookies
+const path = require("path"); // Importar el módulo path
 
 const rutas = (req, res) => {
     try {
         // Parsear las cookies para verificar autenticación
         const cookies = cookie.parse(req.headers.cookie || "");
         const isAuthenticated = cookies.loggedIn === "true"; // Determinar autenticación
-        console.log("isAuthenticated:", isAuthenticated); // Depuración
+        console.log("¿Está logeado (isAuthenticated)?:", isAuthenticated); // Depuración
 
         // Rutas públicas
         if (req.url === "/" && req.method === "GET") {
@@ -17,7 +18,13 @@ const rutas = (req, res) => {
             return;
         }
 
+        // Rutas de autenticación protegidas para usuarios autenticados
         if (req.url === "/auth/login" && req.method === "GET") {
+            if (isAuthenticated) {
+                res.writeHead(302, { Location: "/" }); // REDIRIGIR si ya está autenticado
+                res.end();
+                return;
+            }
             return AuthController.getLogin(req, res);
         }
 
@@ -26,6 +33,11 @@ const rutas = (req, res) => {
         }
 
         if (req.url === "/auth/registro" && req.method === "GET") {
+            if (isAuthenticated) {
+                res.writeHead(302, { Location: "/" }); // REDIRIGIR si ya está autenticado
+                res.end();
+                return;
+            }
             return AuthController.getRegister(req, res);
         }
 
@@ -43,7 +55,7 @@ const rutas = (req, res) => {
             return;
         }
 
-        // Ruta protegida (ejemplo: Cursos)
+        // Ruta protegida (Eg: Cursos)
         if (req.url === "/cursos" && req.method === "GET") {
             if (!isAuthenticated) {
                 res.writeHead(302, { Location: "/auth/login" });
