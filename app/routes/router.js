@@ -3,6 +3,35 @@ const render = require("../utils/render");
 const cookie = require("cookie"); // Importar el módulo de cookies
 const path = require("path"); // Importar el módulo path
 
+/**
+ * Función de enrutamiento principal para manejar las solicitudes HTTP entrantes.
+ * 
+ * Esta función determina la autenticación del usuario a través de cookies y redirige
+ * o responde según la ruta solicitada y el método HTTP. Maneja rutas públicas, rutas
+ * protegidas por autenticación y rutas de autenticación (login, registro, logout).
+ * 
+ * Dependencias:
+ * - cookie: Para parsear las cookies de la solicitud.
+ * - AuthController: Controlador para manejar las rutas de autenticación (login y registro).
+ * - render: Función para renderizar plantillas HTML.
+ * 
+ * Rutas manejadas:
+ * - GET /: Página de inicio pública.
+ * - GET /auth/login: Página de login (redirige si ya está autenticado).
+ * - POST /auth/login: Procesa el formulario de login.
+ * - GET /auth/registro: Página de registro (redirige si ya está autenticado).
+ * - POST /auth/registro: Procesa el formulario de registro.
+ * - GET /logout: Cierra la sesión del usuario.
+ * - GET /cursos: Página de cursos protegida (requiere autenticación).
+ * - Cualquier otra ruta: Responde con una página 404.
+ * 
+ * Manejo de errores:
+ * - Captura y maneja cualquier error durante el enrutamiento, respondiendo con un
+ *   mensaje de error 500 si ocurre un error interno del servidor.
+ * 
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ */
 const rutas = (req, res) => {
     try {
         // Parsear las cookies para verificar autenticación

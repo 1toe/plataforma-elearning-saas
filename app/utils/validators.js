@@ -13,6 +13,18 @@ function validatePassword(password) {
 }
 
 // Validación del login
+/**
+ * Valida las credenciales de inicio de sesión.
+ *
+ * Esta función verifica si el correo electrónico y la contraseña proporcionados son válidos.
+ * Depende de las funciones `validateEmail` y `validatePassword` para realizar las validaciones específicas.
+ *
+ * @param {string} email - El correo electrónico a validar.
+ * @param {string} password - La contraseña a validar.
+ * @returns {Object} Un objeto que indica si las credenciales son válidas y, en caso contrario, proporciona un mensaje de error.
+ * @property {boolean} isValid - Indica si las credenciales son válidas.
+ * @property {string} error - Mensaje de error en caso de que las credenciales no sean válidas.
+ */
 function validateLogin(email, password) {
     if (!validateEmail(email)) {
         return { isValid: false, error: "El correo electrónico no es válido." };

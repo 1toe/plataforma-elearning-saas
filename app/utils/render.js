@@ -14,6 +14,20 @@ function getNavbar(isAuthenticated) {
     return isAuthenticated ? userNavbar : guestNavbar;
 }
 
+/**
+ * Renderiza una vista HTML combinando un layout principal con una vista específica y reemplazando marcadores de posición.
+ *
+ * @param {string} viewName - El nombre del archivo de vista a renderizar (debe estar en la carpeta "../views").
+ * @param {Object} [placeholders={}] - Un objeto con los marcadores de posición y sus valores correspondientes para reemplazar en el contenido.
+ * @param {boolean} [isAuthenticated=false] - Indica si el usuario está autenticado para determinar el contenido de la barra de navegación.
+ * @returns {string} - El contenido HTML final con el layout y la vista combinados y los marcadores de posición reemplazados.
+ *
+ * @requires path - Módulo de Node.js para trabajar con rutas de archivos y directorios.
+ * @requires fs - Módulo de Node.js para trabajar con el sistema de archivos.
+ * @requires getNavbar - Función que devuelve el contenido HTML de la barra de navegación según el estado de autenticación.
+ *
+ * @file /d:/Repositorios Oficial/plataforma-cursos-/app/utils/render.js
+ */
 function render(viewName, placeholders = {}, isAuthenticated = false) {
     const layoutPath = path.join(__dirname, "../views", "mainlayout.html");
     const viewPath = path.join(__dirname, "../views", viewName);

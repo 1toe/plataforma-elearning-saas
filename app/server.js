@@ -4,6 +4,20 @@ const path = require("path");
 const rutas = require("./routes/router");
 
 // Función para servir archivos estáticos
+/**
+ * Sirve un archivo estático al cliente.
+ *
+ * @param {string} filePath - La ruta del archivo que se va a servir.
+ * @param {object} res - El objeto de respuesta HTTP.
+ *
+ * @description
+ * Esta función lee un archivo del sistema de archivos y lo envía como respuesta HTTP.
+ * Determina el tipo de contenido (Content-Type) basado en la extensión del archivo.
+ * Si el archivo no se encuentra, responde con un error 404.
+ * Si ocurre un error interno del servidor, responde con un error 500.
+ * Depende de los módulos 'fs' y 'path' para leer archivos y manejar rutas.
+ */
+
 const servirArchivoEstatico = (filePath, res) => {
     const extname = path.extname(filePath);
     const contentType = {
