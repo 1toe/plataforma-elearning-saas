@@ -1,58 +1,17 @@
 const Usuario = require("../models/User");
-const { validateEmail, validatePassword, validateRUT } = require("../utils/validators");
+const { validateEmail, validatePassword, validateRUT, validateLogin } = require("../utils/validators");
 const render = require("../utils/render");
 
 class AuthController {
 
-    // Mostrar el formulario de inicio de sesión
-    static getLogin(req, res) {
-        const html = render("login.html", { title: "Iniciar Sesión", error: "" });
-        res.writeHead(200, { "Content-Type": "text/html" });
-        res.end(html);
-    }
-
-    // Procesar el inicio de sesión
-    static async postLogin(req, res) {
-        let body = "";
-        req.on("data", (chunk) => (body += chunk));
-        req.on("end", async () => {
-            const formData = new URLSearchParams(body);
-            const email = formData.get("email");
-            const password = formData.get("password");
-
-            try {
-                const usuario = await Usuario.findByEmail(email);
-                if (usuario && usuario.contrasenia === password) {
-
-                    // Simular una sesión y redirigir al perfil
-                    // !        FINES DE TESTING               !
-                    res.writeHead(302, { Location: "/perfil" });
-                    res.end();
-                } else {
-                    const html = render("login.html", {
-                        title: "Iniciar Sesión",
-                        error: "Correo o contraseña incorrectos.",
-                    });
-                    res.writeHead(401, { "Content-Type": "text/html" });
-                    res.end(html);
-                }
-            } catch (error) {
-                const html = render("login.html", {
-                    title: "Iniciar Sesión",
-                    error: "Error en el servidor. Intenta nuevamente.",
-                });
-                res.writeHead(500, { "Content-Type": "text/html" });
-                res.end(html);
-            }
-        });
-    }
-
+    // Mostrar el formulario de registro
     static getRegister(req, res) {
         const html = render("registro.html", { title: "Registro", error: "", success: "" });
         res.writeHead(200, { "Content-Type": "text/html" });
         res.end(html);
     }
 
+    // Procesar el registro de usuario
     static async postRegister(req, res) {
         let body = "";
         req.on("data", (chunk) => (body += chunk));
@@ -64,9 +23,10 @@ class AuthController {
                 apellido: formData.get("apellido"),
                 correo: formData.get("email"),
                 contrasenia: formData.get("password"),
-                tipo_usuario: "estudiante", // Por defecto, agregar opcioón docente
+                tipo_usuario: "estudiante", // Por defecto, agregar opción "estudiante"
             };
 
+            // Validaciones
             if (!validateRUT(usuario.rut)) {
                 const html = render("registro.html", {
                     title: "Registro",
@@ -130,7 +90,69 @@ class AuthController {
             }
         });
     }
-    // Mostrar la página de perfil (En cosntruccion)
+    // Mostrar el formulario de inicio de sesión
+    static getLogin(req, res) {
+        const html = render("login.html", { title: "Iniciar Sesión", error: "" });
+        res.writeHead(200, { "Content-Type": "text/html" });
+        res.end(html);
+    }
+
+    // Procesar el inicio de sesión
+    static async postLogin(req, res) {
+        let body = "";
+        req.on("data", (chunk) => (body += chunk));
+        req.on("end", async () => {
+            const formData = new URLSearchParams(body);
+            const email = formData.get("email");
+            const password = formData.get("password");
+
+            // Validaciones del login
+            const validation = validateLogin(email, password);
+            if (!validation.isValid) {
+                const html = render("login.html", {
+                    title: "Iniciar Sesión",
+                    error: validation.error,
+                });
+                res.writeHead(400, { "Content-Type": "text/html" });
+                res.end(html);
+                return;
+            }
+
+            try {
+                // Buscar al usuario por correo
+                const usuario = await Usuario.findByEmail(email);
+
+                // Validar existencia del usuario y contraseña
+                if (usuario && usuario.contrasenia === password) {
+                    // Iniciar sesión y redirigir al inicio
+                    res.writeHead(302, {
+                        Location: "/",
+                        "Set-Cookie": "loggedIn=true; HttpOnly",
+                    });
+                    res.end();
+                } else {
+                    // Credenciales incorrectas
+                    const html = render("login.html", {
+                        title: "Iniciar Sesión",
+                        error: "Correo o contraseña incorrectos.",
+                    });
+                    res.writeHead(401, { "Content-Type": "text/html" });
+                    res.end(html);
+                }
+            } catch (error) {
+                // Manejar errores del servidor
+                console.error("Error en el login:", error.message);
+                const html = render("login.html", {
+                    title: "Iniciar Sesión",
+                    error: "Error en el servidor. Intenta nuevamente.",
+                });
+                res.writeHead(500, { "Content-Type": "text/html" });
+                res.end(html);
+            }
+        });
+    }
+
+    // Mostrar la página de perfil
     static getProfile(req, res) {
         const html = render("perfil.html", { title: "Perfil de Usuario" });
         res.writeHead(200, { "Content-Type": "text/html" });

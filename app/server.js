@@ -33,23 +33,21 @@ const servirArchivoEstatico = (filePath, res) => {
     });
 };
 
-// Crear el servidor HTTP
+// Crear el servidor
 const servidor = http.createServer((req, res) => {
-    // Servir archivos estáticos desde "public"
     const publicPath = path.join(__dirname, "public");
-    const filePath = path.join(publicPath, req.url === "/" ? "index.html" : req.url);
+    const filePath = path.join(publicPath, req.url);
 
+    // Si la ruta corresponde a un archivo estático, intenta servirlo
     if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
         servirArchivoEstatico(filePath, res);
     } else {
-        rutas(req, res); // Delegar a las rutas si no es un archivo estático
+        rutas(req, res); // Manejar otras rutas a través del router
     }
 });
 
 // Configuración del puerto
-const PUERTO = 3000;
-
-// Iniciar el servidor
-servidor.listen(PUERTO, () => {
-    console.log(`Servidor iniciado en http://localhost:${PUERTO}`);
+const PORT = 3000;
+servidor.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

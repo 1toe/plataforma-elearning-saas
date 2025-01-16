@@ -1,17 +1,8 @@
 const AuthController = require("../controllers/AuthController");
 const render = require("../utils/render");
 
-
 const rutas = (req, res) => {
     try {
-        // Ruta de inicio
-        if (req.url === "/" && req.method === "GET") {
-            const html = render("index.html", { title: "Inicio" });
-            res.writeHead(200, { "Content-Type": "text/html" });
-            res.end(html);
-            return;
-        }
-
         // Rutas de autenticación
         if (req.url === "/auth/login" && req.method === "GET") {
             return AuthController.getLogin(req, res);
@@ -26,9 +17,23 @@ const rutas = (req, res) => {
             return AuthController.postRegister(req, res);
         }
 
-        // Ruta del perfil
-        if (req.url === "/perfil" && req.method === "GET") {
-            return AuthController.getProfile(req, res);
+        // Ruta de logout
+        if (req.url === "/logout" && req.method === "GET") {
+            res.writeHead(302, {
+                Location: "/auth/login",
+                "Set-Cookie": "loggedIn=false; HttpOnly", // Eliminar sesión
+            });
+            res.end();
+            return;
+        }
+
+        // Ruta raíz (inicio)
+        if (req.url === "/" && req.method === "GET") {
+            const isAuthenticated = req.headers.cookie && req.headers.cookie.includes("loggedIn=true");
+            console.log("isAuthenticated:", isAuthenticated); // Registro de depuración
+            res.writeHead(200, { "Content-Type": "text/html" });
+            res.end(render("index.html", { title: "Inicio" }, isAuthenticated));
+            return;
         }
 
         // Ruta no encontrada
