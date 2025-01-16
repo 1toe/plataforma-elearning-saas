@@ -27,29 +27,5 @@ module.exports = {
     validateRUT,
     validateEmail,
     validatePassword,
-    validateLogin, // Exportamos la validación del login
+    validateLogin, 
 };
-
-
-/* Testeo de almacenaje en BD
-
-function validateRUT(rut) {
-    return true; // Bypass, siempre retorna true
-}
-
-function validateEmail(email) {
-    return true; // Bypass, siempre retorna true
-}
-
-function validatePassword(password) {
-    return true; // Bypass, siempre retorna true
-}
-
-module.exports = {
-    validateRUT,
-    validateEmail,
-    validatePassword,
-};
-
-
-*/

@@ -10,7 +10,7 @@ function getNavbar(isAuthenticated) {
         <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
         <li class="nav-item"><a class="nav-link" href="/cursos">Cursos</a></li>
         <li class="nav-item"><a class="nav-link" href="/logout">Salir</a></li>`;
-    
+
     return isAuthenticated ? userNavbar : guestNavbar;
 }
 
