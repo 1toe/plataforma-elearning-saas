@@ -33,9 +33,8 @@ body {
     padding: 1rem;
 }
 
-.space-card {
+.space-card { /* Degradiente para cada card c: */
     background-color: #6f42c1;
-    /* Default gradient, adjust for each card */
     color: white;
     padding: 1rem;
     border-radius: 0.5rem;
@@ -44,7 +43,6 @@ body {
     flex-direction: column;
     min-height: 250px;
     position: relative;
-    /* For absolute positioning of likes */
 }
 
 .space-title {
