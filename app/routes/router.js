@@ -113,6 +113,16 @@ const rutas = (req, res) => {
         }
 
 
+        // Rutas protegida: Crear cursos
+        if (req.url === "/crear-cursos" && req.method === "GET") {
+            if (!isAuthenticated) {
+                res.writeHead(302, { Location: "/auth/login" });
+                res.end();
+                return;
+            }
+            return AuthController.getCrearCursos(req, res);
+        }
+
         // Ruta no encontrada
         res.writeHead(404, { "Content-Type": "text/html" });
         res.end(render("404.html", { title: "Página no encontrada" }));

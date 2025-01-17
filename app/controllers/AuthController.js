@@ -1,4 +1,5 @@
 const Usuario = require("../models/User");
+const { determineUserType } = require("../utils/validators");
 const { validateEmail, validatePassword, validateRUT, validateLogin } = require("../utils/validators");
 const render = require("../utils/render");
 
@@ -32,6 +33,8 @@ class AuthController {
     // Procesar el registro de usuario
     static async postRegister(req, res) {
         let body = "";
+        console.log("Datos del formulario recibidos:", Object.fromEntries(formData));
+
         req.on("data", (chunk) => (body += chunk));
         req.on("end", async () => {
             const formData = new URLSearchParams(body);
@@ -41,7 +44,7 @@ class AuthController {
                 apellido: formData.get("apellido"),
                 correo: formData.get("email"),
                 contrasenia: formData.get("password"),
-                tipo_usuario: "estudiante", // Por defecto, "estudiante"
+                tipo_usuario: determineUserType(formData.get("email"))
             };
 
             // Validaciones
@@ -167,6 +170,38 @@ class AuthController {
         });
     }
 
+    // Mostrar la página de crear cursos, solo para los
+    // profesores que tengan un correo que termine en @profe.cl
+    static getCrearCursos(req, res) {
+        try {
+            const cookies = req.headers.cookie ? require("cookie").parse(req.headers.cookie) : {};
+            const email = cookies.email; // Obtener el email desde las cookies
+
+            if (!email) {
+                res.writeHead(302, { Location: "/auth/login" });
+                res.end();
+                return;
+            }
+
+            // Verificar si el usuario es un profesor
+            if (!email.includes("@profe.cl")) {
+                const html = render("403.html", { title: "Acceso Denegado" }); // Crea una página 403
+                res.writeHead(403, { "Content-Type": "text/html" });
+                res.end(html);
+                return;
+            }
+
+            // Renderizar la página de crear cursos si es un profesor
+            const html = render("crear-curso.html", { title: "Crear Curso" }, true);
+            res.writeHead(200, { "Content-Type": "text/html" });
+            res.end(html);
+        } catch (error) {
+            console.error("Error en getCrearCursos:", error.message);
+            res.writeHead(500, { "Content-Type": "text/plain" });
+            res.end("Error interno del servidor");
+        }
+    }
+
     // Mostrar la página de perfil
     static async getProfile(req, res) {
         try {
@@ -189,7 +224,7 @@ class AuthController {
             const html = render(
                 "perfil.html",
                 {
-                    title: "Perfil de Usuario",
+                    title: "Perfil",
                     nombre: usuario.nombre,
                     apellido: usuario.apellido,
                     email: usuario.correo,

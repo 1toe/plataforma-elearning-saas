@@ -12,6 +12,19 @@ function validatePassword(password) {
     return password.length >= 1; // La contraseña debe tener al menos 1 carácter
 }
 
+// Validación del tipo de usuario según el correo
+/**
+ * Determina el tipo de usuario basado en el correo.
+ * Si el correo termina en "@profe.cl", el tipo de usuario será "profesor".
+ * Si no, el tipo de usuario será "estudiante".
+ *
+ * @param {string} email - El correo electrónico del usuario.
+ * @returns {string} El tipo de usuario: "profesor" o "estudiante".
+ */
+function determineUserType(email) {
+    return email.endsWith("@profe.cl") ? "profesor" : "estudiante";
+} // Exportamos la función para usarla en otras partes del proyecto
+
 // Validación del login
 /**
  * Valida las credenciales de inicio de sesión.
@@ -30,7 +43,7 @@ function validateLogin(email, password) {
         return { isValid: false, error: "El correo electrónico no es válido." };
     }
     if (!validatePassword(password)) {
-        return { isValid: false, error: "La contraseña debe tener al menos 1 caracteres." };
+        return { isValid: false, error: "La contraseña debe tener al menos 1 carácter." };
     }
     return { isValid: true, error: "" };
 }
@@ -39,5 +52,6 @@ module.exports = {
     validateRUT,
     validateEmail,
     validatePassword,
-    validateLogin, 
+    validateLogin,
+    determineUserType,
 };
