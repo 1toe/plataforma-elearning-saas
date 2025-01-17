@@ -5,10 +5,11 @@ function getNavbar(isAuthenticated) {
     const guestNavbar = `
         <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
         <li class="nav-item"><a class="nav-link" href="/auth/login">Ingresar</a></li>
-        <li class="nav-item"><a class="nav-link" href="/auth/registro">Registrar</a></li>`;
+        <li class="nav-item"><a class="nav-link" href="/auth/registro">Crear cuenta</a></li>`;
     const userNavbar = `
         <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
         <li class="nav-item"><a class="nav-link" href="/cursos">Cursos</a></li>
+        <li class="nav-item"><a class="nav-link" href="/perfil">Perfil</a></li>
         <li class="nav-item"><a class="nav-link" href="/logout">Salir</a></li>`;
 
     return isAuthenticated ? userNavbar : guestNavbar;
@@ -26,7 +27,7 @@ function getNavbar(isAuthenticated) {
  * @requires fs - Módulo de Node.js para trabajar con el sistema de archivos.
  * @requires getNavbar - Función que devuelve el contenido HTML de la barra de navegación según el estado de autenticación.
  *
- * @file /d:/Repositorios Oficial/plataforma-cursos-/app/utils/render.js
+ * @file
  */
 function render(viewName, placeholders = {}, isAuthenticated = false) {
     const layoutPath = path.join(__dirname, "../views", "mainlayout.html");

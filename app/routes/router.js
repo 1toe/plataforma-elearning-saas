@@ -39,6 +39,10 @@ const rutas = (req, res) => {
         const isAuthenticated = cookies.loggedIn === "true"; // Determinar autenticación
         console.log("¿Está logeado (isAuthenticated)?:", isAuthenticated); // Depuración
 
+        // Nota:
+        // Si el método req.method === "GET" significa que el cliente está solicitando una página.
+        // Si el método req.method === "POST" significa que el cliente está enviando datos al servidor.
+
         // Rutas públicas
         if (req.url === "/" && req.method === "GET") {
             const html = render("index.html", { title: "Inicio" }, isAuthenticated);
@@ -84,7 +88,7 @@ const rutas = (req, res) => {
             return;
         }
 
-        // Ruta protegida (Eg: Cursos)
+        // Rutas protegida: Cursos
         if (req.url === "/cursos" && req.method === "GET") {
             if (!isAuthenticated) {
                 res.writeHead(302, { Location: "/auth/login" });
@@ -97,9 +101,22 @@ const rutas = (req, res) => {
             return;
         }
 
+        // Ruta protegida: Perfil 
+        if (req.url === "/perfil" && req.method === "GET") {
+            if (!isAuthenticated) {
+                res.writeHead(302, { Location: "/auth/login" });
+                res.end();
+                return;
+            }
+            // Importar el controlador de perfil
+            return AuthController.getProfile(req, res);
+        }
+
+
         // Ruta no encontrada
         res.writeHead(404, { "Content-Type": "text/html" });
         res.end(render("404.html", { title: "Página no encontrada" }));
+
     } catch (error) {
         console.error("Error en el router:", error.message);
         if (!res.headersSent) {

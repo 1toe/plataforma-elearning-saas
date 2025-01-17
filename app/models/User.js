@@ -48,17 +48,15 @@ class Usuario {
 
 
     // Buscar un usuario por correo
-    static findByEmail(correo) {
+    static async findByEmail(email) { // Buscar un usuario por su correo electrónico
+        // Diferencia entre email y correo = email es un objeto, correo es un string
         return new Promise((resolve, reject) => {
-            const query = `
-                SELECT * FROM users WHERE correo = ?
-            `;
-            db.get(query, [correo], (err, row) => {
-                if (err) {
-                    reject(err); // Error en la consulta
-                } else {
-                    resolve(row); // Usuario encontrado o null
+            const query = "SELECT * FROM users WHERE correo = ?"; // Consulta SQL
+            db.get(query, [email], (err, row) => {
+                if (err) { // Si hay un error en la consulta
+                    return reject(err); // Entonmces, devolver el error
                 }
+                resolve(row); // Devolver el usuario encontrado
             });
         });
     }

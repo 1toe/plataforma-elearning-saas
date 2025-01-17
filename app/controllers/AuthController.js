@@ -22,7 +22,6 @@ const render = require("../utils/render");
  */
 
 class AuthController {
-
     // Mostrar el formulario de registro
     static getRegister(req, res) {
         const html = render("registro.html", { title: "Registro", error: "", success: "" });
@@ -42,7 +41,7 @@ class AuthController {
                 apellido: formData.get("apellido"),
                 correo: formData.get("email"),
                 contrasenia: formData.get("password"),
-                tipo_usuario: "estudiante", // Por defecto, asigné la iopcióm "estudiante", después hay que configurarla según un formulario pára docentes.
+                tipo_usuario: "estudiante", // Por defecto, "estudiante"
             };
 
             // Validaciones
@@ -109,6 +108,7 @@ class AuthController {
             }
         });
     }
+
     // Mostrar el formulario de inicio de sesión
     static getLogin(req, res) {
         const html = render("login.html", { title: "Iniciar Sesión", error: "" });
@@ -125,7 +125,6 @@ class AuthController {
             const email = formData.get("email");
             const password = formData.get("password");
 
-            // Validaciones del login
             const validation = validateLogin(email, password);
             if (!validation.isValid) {
                 const html = render("login.html", {
@@ -138,19 +137,17 @@ class AuthController {
             }
 
             try {
-                // Buscar al usuario por correo
                 const usuario = await Usuario.findByEmail(email);
-
-                // Validar existencia del usuario y contraseña
                 if (usuario && usuario.contrasenia === password) {
-                    // Iniciar sesión y redirigir al inicio
                     res.writeHead(302, {
                         Location: "/",
-                        "Set-Cookie": "loggedIn=true; Path=/; HttpOnly", // Configurar Path global
+                        "Set-Cookie": [
+                            "loggedIn=true; Path=/; HttpOnly",
+                            `email=${usuario.correo}; Path=/; HttpOnly`,
+                        ],
                     });
                     res.end();
                 } else {
-                    // Credenciales incorrectas
                     const html = render("login.html", {
                         title: "Iniciar Sesión",
                         error: "Correo o contraseña incorrectos.",
@@ -159,7 +156,6 @@ class AuthController {
                     res.end(html);
                 }
             } catch (error) {
-                // Manejar errores del servidor
                 console.error("Error en el login:", error.message);
                 const html = render("login.html", {
                     title: "Iniciar Sesión",
@@ -171,11 +167,48 @@ class AuthController {
         });
     }
 
-    // Mostrar la página de perfil (ToDo!!!)
-    static getProfile(req, res) {
-        const html = render("perfil.html", { title: "Perfil de Usuario" });
-        res.writeHead(200, { "Content-Type": "text/html" });
-        res.end(html);
+    // Mostrar la página de perfil
+    static async getProfile(req, res) {
+        try {
+            const cookies = req.headers.cookie ? require("cookie").parse(req.headers.cookie) : {};
+            const email = cookies.email;
+
+            if (!email) {
+                res.writeHead(302, { Location: "/auth/login" });
+                res.end();
+                return;
+            }
+
+            const usuario = await Usuario.findByEmail(email);
+            if (!usuario) {
+                res.writeHead(404, { "Content-Type": "text/html" });
+                res.end(render("404.html", { title: "Usuario no encontrado" }));
+                return;
+            }
+
+            const html = render(
+                "perfil.html",
+                {
+                    title: "Perfil de Usuario",
+                    nombre: usuario.nombre,
+                    apellido: usuario.apellido,
+                    email: usuario.correo,
+                    tipo_usuario: `${usuario.tipo_usuario}`,
+                    fecha_ingreso: new Intl.DateTimeFormat('es-ES', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    }).format(new Date(usuario.created_at)),
+                },
+                true
+            );
+            res.writeHead(200, { "Content-Type": "text/html" });
+            res.end(html);
+        } catch (error) {
+            console.error("Error en getProfile:", error.message);
+            res.writeHead(500, { "Content-Type": "text/plain" });
+            res.end("Error interno del servidor");
+        }
     }
 }
 
