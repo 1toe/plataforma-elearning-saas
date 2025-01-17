@@ -1,60 +1,36 @@
 const AuthController = require("../controllers/AuthController");
 const render = require("../utils/render");
-const cookie = require("cookie"); // Importar el módulo de cookies
-const path = require("path"); // Importar el módulo path
+const cookie = require("cookie");
+const Usuario = require("../models/User");
 
-/**
- * Función de enrutamiento principal para manejar las solicitudes HTTP entrantes.
- * 
- * Esta función determina la autenticación del usuario a través de cookies y redirige
- * o responde según la ruta solicitada y el método HTTP. Maneja rutas públicas, rutas
- * protegidas por autenticación y rutas de autenticación (login, registro, logout).
- * 
- * Dependencias:
- * - cookie: Para parsear las cookies de la solicitud.
- * - AuthController: Controlador para manejar las rutas de autenticación (login y registro).
- * - render: Función para renderizar plantillas HTML.
- * 
- * Rutas manejadas:
- * - GET /: Página de inicio pública.
- * - GET /auth/login: Página de login (redirige si ya está autenticado).
- * - POST /auth/login: Procesa el formulario de login.
- * - GET /auth/registro: Página de registro (redirige si ya está autenticado).
- * - POST /auth/registro: Procesa el formulario de registro.
- * - GET /logout: Cierra la sesión del usuario.
- * - GET /cursos: Página de cursos protegida (requiere autenticación).
- * - Cualquier otra ruta: Responde con una página 404.
- * 
- * Manejo de errores:
- * - Captura y maneja cualquier error durante el enrutamiento, respondiendo con un
- *   mensaje de error 500 si ocurre un error interno del servidor.
- * 
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- */
-const rutas = (req, res) => {
+const rutas = async (req, res) => {
     try {
-        // Parsear las cookies para verificar autenticación
         const cookies = cookie.parse(req.headers.cookie || "");
-        const isAuthenticated = cookies.loggedIn === "true"; // Determinar autenticación
-        console.log("¿Está logeado (isAuthenticated)?:", isAuthenticated); // Depuración
+        const isAuthenticated = cookies.loggedIn === "true";
+        const email = cookies.email || "";
+        let userRole = "";
 
-        // Nota:
-        // Si el método req.method === "GET" significa que el cliente está solicitando una página.
-        // Si el método req.method === "POST" significa que el cliente está enviando datos al servidor.
+        if (isAuthenticated && email) {
+            try {
+                const usuario = await Usuario.findByEmail(email);
+                userRole = usuario ? usuario.tipo_usuario : "";
+            } catch (error) {
+                console.error("Error al obtener el rol del usuario:", error.message);
+            }
+        }
 
-        // Rutas públicas
+        console.log("¿Está logeado (isAuthenticated)?:", isAuthenticated, "Rol:", userRole);
+
         if (req.url === "/" && req.method === "GET") {
-            const html = render("index.html", { title: "Inicio" }, isAuthenticated);
+            const html = render("index.html", { title: "Inicio" }, isAuthenticated, userRole);
             res.writeHead(200, { "Content-Type": "text/html" });
             res.end(html);
             return;
         }
 
-        // Rutas de autenticación protegidas para usuarios autenticados
         if (req.url === "/auth/login" && req.method === "GET") {
             if (isAuthenticated) {
-                res.writeHead(302, { Location: "/" }); // REDIRIGIR si ya está autenticado
+                res.writeHead(302, { Location: "/" });
                 res.end();
                 return;
             }
@@ -67,7 +43,7 @@ const rutas = (req, res) => {
 
         if (req.url === "/auth/registro" && req.method === "GET") {
             if (isAuthenticated) {
-                res.writeHead(302, { Location: "/" }); // REDIRIGIR si ya está autenticado
+                res.writeHead(302, { Location: "/" });
                 res.end();
                 return;
             }
@@ -78,55 +54,47 @@ const rutas = (req, res) => {
             return AuthController.postRegister(req, res);
         }
 
-        // Ruta de logout
         if (req.url === "/logout" && req.method === "GET") {
             res.writeHead(302, {
                 Location: "/auth/login",
-                "Set-Cookie": "loggedIn=false; Path=/; HttpOnly", // Elimina autenticación
+                "Set-Cookie": "loggedIn=false; Path=/; HttpOnly",
             });
             res.end();
             return;
         }
 
-        // Rutas protegida: Cursos
         if (req.url === "/cursos" && req.method === "GET") {
             if (!isAuthenticated) {
                 res.writeHead(302, { Location: "/auth/login" });
                 res.end();
                 return;
             }
-            const html = render("cursos.html", { title: "Cursos" }, isAuthenticated);
+            const html = render("cursos.html", { title: "Cursos" }, isAuthenticated, userRole);
             res.writeHead(200, { "Content-Type": "text/html" });
             res.end(html);
             return;
         }
 
-        // Ruta protegida: Perfil 
         if (req.url === "/perfil" && req.method === "GET") {
             if (!isAuthenticated) {
                 res.writeHead(302, { Location: "/auth/login" });
                 res.end();
                 return;
             }
-            // Importar el controlador de perfil
             return AuthController.getProfile(req, res);
         }
 
-
-        // Rutas protegida: Crear cursos
         if (req.url === "/crear-cursos" && req.method === "GET") {
-            if (!isAuthenticated) {
-                res.writeHead(302, { Location: "/auth/login" });
-                res.end();
+            if (!isAuthenticated || userRole !== "docente") {
+                res.writeHead(403, { "Content-Type": "text/html" });
+                res.end(render("403.html", { title: "Acceso Denegado" }));
                 return;
             }
             return AuthController.getCrearCursos(req, res);
         }
 
-        // Ruta no encontrada
         res.writeHead(404, { "Content-Type": "text/html" });
         res.end(render("404.html", { title: "Página no encontrada" }));
-
     } catch (error) {
         console.error("Error en el router:", error.message);
         if (!res.headersSent) {
