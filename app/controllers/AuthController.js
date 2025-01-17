@@ -33,19 +33,22 @@ class AuthController {
     // Procesar el registro de usuario
     static async postRegister(req, res) {
         let body = "";
-        console.log("Datos del formulario recibidos:", Object.fromEntries(formData));
-
         req.on("data", (chunk) => (body += chunk));
         req.on("end", async () => {
-            const formData = new URLSearchParams(body);
+            const formData = new URLSearchParams(body); // Asegúrate de parsear correctamente los datos
+            const parsedData = Object.fromEntries(formData.entries()); // Convierte a un objeto iterable
+            console.log("Datos del formulario recibidos:", parsedData); // Ahora puedes usarlo para depuración
+
             const usuario = {
                 rut: formData.get("rut"),
                 nombre: formData.get("nombre"),
                 apellido: formData.get("apellido"),
                 correo: formData.get("email"),
                 contrasenia: formData.get("password"),
-                tipo_usuario: determineUserType(formData.get("email"))
+                tipo_usuario: formData.get("email").includes("@profe.cl") ? "docente" : "estudiante",
             };
+            // Log por si las moscas.
+            console.log("Datos del formulario recibidos:", Object.fromEntries(formData)); // Aquí ya tienes los datos correctamente definidos
 
             // Validaciones
             if (!validateRUT(usuario.rut)) {
@@ -80,7 +83,6 @@ class AuthController {
                 res.end(html);
                 return;
             }
-
             try {
                 await Usuario.create(usuario);
                 const html = render("registro.html", {
@@ -91,6 +93,7 @@ class AuthController {
                 res.writeHead(200, { "Content-Type": "text/html" });
                 res.end(html);
             } catch (error) {
+                console.error("Error al registrar usuario:", error.message);
                 if (error.message.includes("UNIQUE constraint failed")) {
                     const html = render("registro.html", {
                         title: "Registro",
