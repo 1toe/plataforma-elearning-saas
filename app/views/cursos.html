@@ -1,22 +1,31 @@
 {% extends "mainlayout.html" %}
 
 {% block content %}
-<div class="header">
-    <span>🤓</span>
-    <span>Tus cursos</span>
-    <span>📕</span>
-</div>
-
-<div class="space-grid">
-    {% for curso in cursos %}
-    <div class="space-card">
-        <div class="space-title">{{ curso.emoji }} {{ curso.nombre }}</div>
-        <div class="space-description">{{ curso.descripcion }}</div>
-        <div class="space-info">
-            <span>📅 {{ curso.fecha_inicio }} - {{ curso.fecha_fin }}</span>
-            <span>📌 {{ curso.estado }}</span>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white text-center">
+                    <span>🤓</span>
+                    <span>Tus cursos</span>
+                    <span>📕</span>
+                </div>
+                <div class="card-body">
+                    <div class="space-grid">
+                        {% for curso in cursos %}
+                        <div class="space-card">
+                            <div class="space-title">{{ curso.emoji }} {{ curso.nombre }}</div>
+                            <div class="space-description">{{ curso.descripcion }}</div>
+                            <div class="space-info">
+                                <span>📅 {{ curso.fecha_inicio }} - {{ curso.fecha_fin }}</span>
+                                <span>📌 {{ curso.estado }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    {% endfor %}
 </div>
 {% endblock %}

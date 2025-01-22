@@ -47,6 +47,7 @@ class Course {
 }
 
 module.exports = {
+    createCourse,
     async findAll() {
         // Implementa la lógica para obtener todos los cursos de la fuente de datos
         // return arrayDeCursos;
