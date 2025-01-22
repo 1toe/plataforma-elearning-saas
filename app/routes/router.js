@@ -2,8 +2,13 @@ const AuthController = require("../controllers/AuthController");
 const render = require("../utils/render");
 const cookie = require("cookie");
 const Usuario = require("../models/User");
+const CourseController = require("../controllers/CourseController");
 
 const rutas = async (req, res) => {
+    // Parse URL to get the path
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const path = url.pathname;
+
     try {
         const cookies = cookie.parse(req.headers.cookie || "");
         const isAuthenticated = cookies.loggedIn === "true";
@@ -20,6 +25,11 @@ const rutas = async (req, res) => {
         }
 
         console.log("¿Está logeado (isAuthenticated)?:", isAuthenticated, "Rol:", userRole);
+
+        // Add courses route
+        if (path === "/cursos") {
+            return await CourseController.showCourses(req, res, {isAuthenticated, userRole});
+        }
 
         if (req.url === "/" && req.method === "GET") {
             const html = render("index.html", { title: "Inicio" }, isAuthenticated, userRole);
@@ -91,6 +101,10 @@ const rutas = async (req, res) => {
                 return;
             }
             return AuthController.getCrearCursos(req, res);
+        }
+
+        if (req.method === 'POST' && req.url === '/courses/create') {
+            return CourseController.create(req, res);
         }
 
         res.writeHead(404, { "Content-Type": "text/html" });

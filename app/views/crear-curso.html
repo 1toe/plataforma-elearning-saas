@@ -1,40 +1,61 @@
-<div class="container mt-5">
-    <div class="row justify-content-center"></div>
-        <div class="col-md-8">
-            <div class="card shadow"></div>
-                <div class="card-header text-white text-center" style="background-color: #2e3267;">
-                    <h2>Crear Curso</h2>
-                </div>
-                <div class="card-body">
-                    <form action="" method="post">
-                        <div class="mb-3">
-                            <label for="COD_CURSO" class="form-label">Código del Curso</label>
-                            <input type="text" id="COD_CURSO" name="COD_CURSO" class="form-control">
-                        </div>
-                        <div class="mb-3"></div>
-                            <label for="NOMBRE_CURSO" class="form-label">Nombre del Curso</label>
-                            <input type="text" id="NOMBRE_CURSO" name="NOMBRE_CURSO" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label for="FECHA_INICIO" class="form-label">Fecha de Inicio</label>
-                            <input type="date" id="FECHA_INICIO" name="FECHA_INICIO" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label for="FECHA_FIN" class="form-label">Fecha de Fin</label>
-                            <input type="date" id="FECHA_FIN" name="FECHA_FIN" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label for="ESTADO" class="form-label">Estado</label>
-                            <input type="text" id="ESTADO" name="ESTADO" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label for="DESCRIPCION_CURSO" class="form-label">Descripción del Curso</label>
-                            <input type="text" id="DESCRIPCION_CURSO" name="DESCRIPCION_CURSO" class="form-control">
-                        </div>
-                        <button type="submit" class="btn btn-primary mt-3">Crear Curso</button>
-                    </form>
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Curso</title>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h4>Crear Nuevo Curso</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="/courses/create">
+                            <div class="mb-3">
+                                <label for="codigo" class="form-label">Código del Curso</label>
+                                <input type="text" id="codigo" name="codigo" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">Nombre del Curso</label>
+                                <input type="text" id="nombre" name="nombre" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="descripcion" class="form-label">Descripción</label>
+                                <textarea id="descripcion" name="descripcion" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
+                                <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="fecha_fin" class="form-label">Fecha de Fin</label>
+                                <input type="date" id="fecha_fin" name="fecha_fin" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="estado" class="form-label">Estado</label>
+                                <select id="estado" name="estado" class="form-control">
+                                    <option value="activo">Activo</option>
+                                    <option value="inactivo">Inactivo</option>
+                                    <option value="borrador">Borrador</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Crear Curso</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

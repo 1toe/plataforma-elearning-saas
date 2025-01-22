@@ -33,8 +33,8 @@ body {
     padding: 1rem;
 }
 
-.space-card { /* Degradiente para cada card c: */
-    background-color: #6f42c1;
+.space-card {
+    background-image: linear-gradient(to bottom, #6f42c1, #a363e3);
     color: white;
     padding: 1rem;
     border-radius: 0.5rem;
@@ -43,12 +43,24 @@ body {
     flex-direction: column;
     min-height: 250px;
     position: relative;
+    overflow: hidden;
+}
+
+.space-card::before {
+    content: '📚';
+    position: absolute;
+    font-size: 5rem;
+    opacity: 0.1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .space-title {
     font-weight: bold;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     margin-bottom: 0.5rem;
+    z-index: 1;
 }
 
 .space-platform {
@@ -86,17 +98,20 @@ body {
 
 .space-description {
     color: lightgray;
-    font-size: 0.9rem;
+    font-size: 1rem;
     line-height: 1.5;
     margin-bottom: 1rem;
     flex-grow: 1;
+    z-index: 1;
 }
 
 .space-info {
     color: lightgray;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    z-index: 1;
 }
 
 .space-author {

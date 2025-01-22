@@ -1,52 +1,22 @@
-<!DOCTYPE html>
-<html lang="es" data-bs-theme="light">
+{% extends "mainlayout.html" %}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elearn - Cursos</title>
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="/assets/css/style-cursos.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+{% block content %}
+<div class="header">
+    <span>🤓</span>
+    <span>Tus cursos</span>
+    <span>📕</span>
+</div>
 
-<body>
-    <div class="header">
-        <span>🤓</span>
-        <span>Tus cursos</span>
-        <span>📕</span>
-    </div>
-
-    <div class="space-grid">
-        <div class="space-card">
-            <div class="space-title">{{Curso}}</div>
-            <!--<img src="heart.svg" alt="Icon" class="space-icon"> Evaluar !!! --> 
-            <div class="space-description">{{Descripcion curso}}</div>
-            <div class="space-info">
-            </div>
-        </div>
-        <div class="space-card">
-            <div class="space-title">{{Curso}}</div>
-            <!--<img src="heart.svg" alt="Icon" class="space-icon"> Evaluar !!! -->
-            <div class="space-description">{{Descripcion curso}}</div>
-            <div class="space-info">
-            </div>
-        </div><div class="space-card">
-            <div class="space-title">{{Curso}}</div>
-            <!--<img src="heart.svg" alt="Icon" class="space-icon"> Evaluar !!! -->
-            <div class="space-description">{{Descripcion curso}}</div>
-            <div class="space-info">
-            </div>
-        </div><div class="space-card">
-            <div class="space-title">{{Curso}}</div>
-            <!--<img src="heart.svg" alt="Icon" class="space-icon"> Evaluar !!! -->
-            <div class="space-description">{{Descripcion curso}}</div>
-            <div class="space-info">
-            </div>
+<div class="space-grid">
+    {% for curso in cursos %}
+    <div class="space-card">
+        <div class="space-title">{{ curso.nombre }}</div>
+        <div class="space-description">{{ curso.descripcion }}</div>
+        <div class="space-info">
+            <span>📅 {{ curso.fecha_inicio }} - {{ curso.fecha_fin }}</span>
+            <span>📌 {{ curso.estado }}</span>
         </div>
     </div>
-
-</body>
-<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
-
-</html>
+    {% endfor %}
+</div>
+{% endblock %}

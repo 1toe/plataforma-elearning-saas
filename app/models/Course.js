@@ -1,5 +1,3 @@
-
-
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./data/database.sqlite');
 
@@ -26,4 +24,26 @@ const getCourseById = (id, callback) => {
     });
 };
 
-module.exports = { getAllCourses, getCourseById };
+const createCourse = (codigo, nombre, descripcion, fecha_inicio, fecha_fin, estado, callback) => {
+    const sql = `INSERT INTO courses (codigo, nombre, descripcion, fecha_inicio, fecha_fin, estado) VALUES (?, ?, ?, ?, ?, ?)`;
+    db.run(sql, [codigo, nombre, descripcion, fecha_inicio, fecha_fin, estado], function(err) {
+        callback(err, this.lastID);
+    });
+};
+
+class Course {
+    static find() {
+        return new Promise((resolve, reject) => {
+            const query = 'SELECT * FROM courses';
+            db.all(query, [], (err, rows) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
+    }
+}
+
+module.exports = Course;
