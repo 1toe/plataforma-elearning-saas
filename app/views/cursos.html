@@ -10,7 +10,7 @@
 <div class="space-grid">
     {% for curso in cursos %}
     <div class="space-card">
-        <div class="space-title">{{ curso.nombre }}</div>
+        <div class="space-title">{{ curso.emoji }} {{ curso.nombre }}</div>
         <div class="space-description">{{ curso.descripcion }}</div>
         <div class="space-info">
             <span>📅 {{ curso.fecha_inicio }} - {{ curso.fecha_fin }}</span>
