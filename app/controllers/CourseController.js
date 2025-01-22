@@ -1,5 +1,6 @@
 const { addCourse } = require('../services/courseService');
 const Course = require('../models/Course');
+const render = require('../utils/render');
 
 const create = (req, res) => {
     let body = '';
@@ -27,14 +28,16 @@ const create = (req, res) => {
     });
 };
 
-const showCourses = async (req, res) => {
+const showCourses = async (req, res, { isAuthenticated, userRole }) => {
     try {
-        const courses = await Course.find();
-        res.render('cursos', { courses });
+        const courses = await Course.findAll();
+        const html = render('cursos.html', { courses, title: 'Lista de Cursos' }, isAuthenticated, userRole);
+        res.writeHead(200, { "Content-Type": "text/html" });
+        res.end(html);
     } catch (error) {
         console.error('Error fetching courses:', error);
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end('Error loading courses');
+        res.writeHead(500, { "Content-Type": "tex1t/plain" });
+        res.end('Error interno del servidor');
     }
 };
 

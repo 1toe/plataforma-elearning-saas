@@ -46,4 +46,9 @@ class Course {
     }
 }
 
-module.exports = Course;
+module.exports = {
+    async findAll() {
+        // Implementa la lógica para obtener todos los cursos de la fuente de datos
+        // return arrayDeCursos;
+    }
+};
