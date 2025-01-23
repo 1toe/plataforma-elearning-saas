@@ -46,10 +46,10 @@
                                     <h6 class="mb-0">{{this.titulo}}</h6>
                                     {{#if ../isTeacher}}
                                     <div class="btn-group">
-                                        <button class="btn btn-sm btn-outline-secondary" onclick="editarContenido({{this.id}})">
+                                        <button class="btn btn-sm btn-outline-secondary" data-action="edit" data-id="{{this.id}}">
                                             <i class="bi bi-pencil me-1"></i>Editar
                                         </button>
-                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarContenido({{this.id}})">
+                                        <button class="btn btn-sm btn-outline-danger" data-action="delete" data-id="{{this.id}}">
                                             <i class="bi bi-trash me-1"></i>Eliminar
                                         </button>
                                     </div>
@@ -141,30 +141,40 @@
             contenidos.forEach(contenido => {
                 contenido.innerHTML = marked.parse(contenido.textContent);
             });
-        });
 
-        async function eliminarContenido(contenidoId) {
-            if (confirm('¿Estás seguro de que deseas eliminar este contenido?')) {
-                try {
-                    const response = await fetch(`/contenido/${contenidoId}`, {
-                        method: 'DELETE'
-                    });
-                    if (response.ok) {
-                        window.location.reload();
-                    } else {
-                        alert('Error al eliminar el contenido');
+            // Add event listeners for edit and delete buttons
+            document.querySelectorAll('[data-action]').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const action = e.target.closest('[data-action]').dataset.action;
+                    const id = e.target.closest('[data-action]').dataset.id;
+                    
+                    if (!id) {
+                        console.error('No se encontró el ID del contenido');
+                        return;
                     }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Error al eliminar el contenido');
-                }
-            }
-        }
 
-        async function editarContenido(contenidoId) {
-            // Implementar la edición de contenido
-            window.location.href = `/contenido/${contenidoId}/editar`;
-        }
+                    if (action === 'edit') {
+                        window.location.href = `/contenido/${id}/editar`;
+                    } else if (action === 'delete') {
+                        if (confirm('¿Estás seguro de que deseas eliminar este contenido?')) {
+                            try {
+                                const response = await fetch(`/contenido/${id}`, {
+                                    method: 'DELETE'
+                                });
+                                if (response.ok) {
+                                    window.location.reload();
+                                } else {
+                                    alert('Error al eliminar el contenido');
+                                }
+                            } catch (error) {
+                                console.error('Error:', error);
+                                alert('Error al eliminar el contenido');
+                            }
+                        }
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html> 

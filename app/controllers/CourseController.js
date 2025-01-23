@@ -136,6 +136,43 @@ const courseController = {
                 res.end("Error interno del servidor");
             }
         });
+    },
+
+    editCourse: async (req, res) => {
+        let body = '';
+        req.on('data', chunk => body += chunk.toString());
+
+        req.on('end', async () => {
+            try {
+                const courseData = new URLSearchParams(body);
+                const courseId = req.params.id;
+
+                // Check if courseId is defined
+                if (!courseId) {
+                    res.writeHead(400, { 'Content-Type': 'text/plain' });
+                    res.end('Course ID is required');
+                    return;
+                }
+
+                const updatedCourse = {
+                    codigo: courseData.get('codigo'),
+                    nombre: courseData.get('nombre'),
+                    descripcion: courseData.get('descripcion'),
+                    fecha_inicio: courseData.get('fecha_inicio'),
+                    fecha_fin: courseData.get('fecha_fin'),
+                    estado: courseData.get('estado')
+                };
+
+                await courseService.updateCourse(courseId, updatedCourse);
+                res.writeHead(302, { Location: `/curso/${courseId}` });
+                res.end();
+
+            } catch (error) {
+                console.error('Error al editar curso:', error);
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end('Error interno del servidor');
+            }
+        });
     }
 };
 

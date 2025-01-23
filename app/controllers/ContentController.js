@@ -15,6 +15,13 @@ const contentController = {
                     contenido: formData.get('contenido')
                 };
 
+                // Validate contentData before creating
+                if (!contentData.lesson_id || !contentData.titulo || !contentData.contenido) {
+                    res.writeHead(400, { 'Content-Type': 'text/plain' });
+                    res.end('Faltan datos requeridos');
+                    return;
+                }
+
                 await Content.create(contentData);
                 res.writeHead(302, { Location: `/lecciones/${contentData.lesson_id}` });
                 res.end();
@@ -32,4 +39,4 @@ const contentController = {
     }
 };
 
-module.exports = contentController; 
+module.exports = contentController;
