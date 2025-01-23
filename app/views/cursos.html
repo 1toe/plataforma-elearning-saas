@@ -17,64 +17,81 @@
     </div>
 
     <script>
-        function getBadgeClass(estado) {
-            switch(estado) {
-                case 'activo': return 'bg-success';
-                case 'inactivo': return 'bg-secondary';
-                default: return 'bg-warning';
+        document.addEventListener('DOMContentLoaded', () => {
+            const cursosContainer = document.getElementById('cursos-container');
+            const cursos = JSON.parse('{{cursos}}');
+            const userRole = '{{userRole}}'; // Ensure userRole is defined
+
+            function getBadgeClass(estado) {
+                switch(estado) {
+                    case 'activo': return 'bg-success';
+                    case 'inactivo': return 'bg-secondary';
+                    default: return 'bg-warning';
+                }
             }
-        }
 
-        function createCourseCard(curso) {
-            return `
-                <div class="col">
-                    <div class="card h-100 curso-card">
-                        <div class="card-header bg-light">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="badge ${getBadgeClass(curso.estado)}">
-                                    ${curso.estado.charAt(0).toUpperCase() + curso.estado.slice(1)}
-                                </span>
-                                <small class="text-muted">#${curso.codigo}</small>
+            function createCourseCard(curso) {
+                return `
+                    <div class="col">
+                        <div class="card h-100 curso-card">
+                            <div class="card-header bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge ${getBadgeClass(curso.estado)}">
+                                        ${curso.estado.charAt(0).toUpperCase() + curso.estado.slice(1)}
+                                    </span>
+                                    <small class="text-muted">#${curso.codigo}</small>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="card-body">
-                            <h5 class="card-title mb-3">${curso.nombre}</h5>
-                            <p class="card-text text-muted small">${curso.descripcion}</p>
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">${curso.nombre}</h5>
+                                <p class="card-text text-muted small">${curso.descripcion}</p>
 
-                            <div class="mt-4">
-                                <div class="row small">
-                                    <div class="col-6">
-                                        <div class="text-muted">Inicio</div>
-                                        <div class="fw-bold">${curso.fecha_inicio}</div>
+                                <div class="mt-4">
+                                    <div class="row small">
+                                        <div class="col-6">
+                                            <div class="text-muted">Inicio</div>
+                                            <div class="fw-bold">${curso.fecha_inicio}</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-muted">Fin</div>
+                                            <div class="fw-bold">${curso.fecha_fin}</div>
+                                        </div>
                                     </div>
-                                    <div class="col-6">
-                                        <div class="text-muted">Fin</div>
-                                        <div class="fw-bold">${curso.fecha_fin}</div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer bg-transparent">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted small">
+                                        Creado: ${curso.created_at}
+                                    </span>
+                                    <div class="btn-group">
+                                        ${userRole === 'docente' ? `
+                                        <a href="/curso/${curso.id}/test" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-journal-check me-1"></i>Test
+                                        </a>
+                                        <a href="/curso/${curso.id}/lecciones" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-book me-1"></i>Lecciones
+                                        </a>
+                                        <a href="/curso/${curso.id}/editar" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-pencil me-1"></i>Editar
+                                        </a>
+                                        ` : `
+                                        <a href="/curso/${curso.id}/contenido" class="btn btn-sm btn-outline-info">
+                                            <i class="bi bi-play-circle me-1"></i>Ver Contenido
+                                        </a>
+                                        <a href="/curso/${curso.id}/test" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-journal-check me-1"></i>Realizar Test
+                                        </a>
+                                        `}
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="card-footer bg-transparent">
-                            <div class="d-flex justify-content-between align-items-center small">
-                                <span class="text-muted">
-                                    Creado: ${curso.created_at}
-                                </span>
-                                <a href="/cursos/${curso.id}" class="btn btn-sm btn-outline-primary">
-                                    Ver <i class="bi bi-arrow-right-short"></i>
-                                </a>
-                            </div>
-                        </div>
                     </div>
-                </div>
-            `;
-        }
-
-        // Cargar los cursoss
-        document.addEventListener('DOMContentLoaded', () => {
-            const cursosContainer = document.getElementById('cursos-container');
-            const cursos = JSON.parse('{{cursos}}');
+                `;
+            }
 
             if (cursos && cursos.length > 0) {
                 cursosContainer.innerHTML = cursos.map(curso => createCourseCard(curso)).join('');

@@ -259,8 +259,7 @@ button:hover {
 }
 
 .curso-card {
-    transition: transform 0.2s ease-in-out;
-    border: 1px solid rgba(0,0,0,0.125);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 .curso-card:hover {
@@ -290,4 +289,101 @@ button:hover {
 .curso-card .btn-outline-primary:hover {
     background-color: #007bff;
     color: white;
+}
+
+.btn-group .btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-group .btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+}
+
+.btn-group .btn:hover::after {
+    width: 200%;
+    height: 200%;
+}
+
+.breadcrumb {
+    background: rgba(255,255,255,0.9);
+    padding: 0.75rem 1rem;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.breadcrumb-item a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.card-actions {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.curso-card:hover .card-actions {
+    opacity: 1;
+}
+
+/* Improved button styles */
+.btn-outline-primary,
+.btn-outline-success,
+.btn-outline-secondary,
+.btn-outline-info {
+    border-width: 2px;
+    font-weight: 500;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.75rem;
+}
+
+/* Animation for icons */
+.bi {
+    transition: transform 0.2s ease-in-out;
+}
+
+.btn:hover .bi {
+    transform: scale(1.2);
+}
+
+/* Add these styles for the dropdown menu */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1.5rem;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.dropdown-item i {
+    margin-right: 0.5rem;
+    font-size: 0.9em;
+}
+
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
 }

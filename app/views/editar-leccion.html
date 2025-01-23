@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Lección</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    <div class="container py-4">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/cursos">Cursos</a></li>
+                <li class="breadcrumb-item"><a href="/curso/{{curso.id}}">{{curso.nombre}}</a></li>
+                <li class="breadcrumb-item"><a href="/curso/{{curso.id}}/lecciones">Lecciones</a></li>
+                <li class="breadcrumb-item active">Editar Lección</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Editar Lección</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="editarLeccionForm" action="/leccion/{{leccion.id}}/actualizar" method="POST">
+                            <div class="mb-3">
+                                <label class="form-label">Título</label>
+                                <input type="text" class="form-control" name="titulo" value="{{leccion.titulo}}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Descripción</label>
+                                <textarea class="form-control" name="descripcion" rows="3" required>{{leccion.descripcion}}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Orden</label>
+                                <input type="number" class="form-control" name="orden" value="{{leccion.orden}}" min="1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Estado</label>
+                                <select class="form-select" name="estado" required>
+                                    <option value="borrador" {{#if (eq leccion.estado "borrador")}}selected{{/if}}>Borrador</option>
+                                    <option value="publicado" {{#if (eq leccion.estado "publicado")}}selected{{/if}}>Publicado</option>
+                                </select>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <a href="/curso/{{curso.id}}/lecciones" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left me-2"></i>Volver
+                                </a>
+                                <div>
+                                    <button type="button" class="btn btn-danger me-2" onclick="eliminarLeccion()">
+                                        <i class="bi bi-trash me-2"></i>Eliminar
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-save me-2"></i>Guardar Cambios
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Vista previa de contenidos -->
+                <div class="card mt-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Contenidos de la Lección</h5>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#nuevoContenidoModal">
+                            <i class="bi bi-plus-circle me-2"></i>Agregar Contenido
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        {{#if contenidos.length}}
+                        <div class="list-group">
+                            {{#each contenidos}}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{this.titulo}}</h6>
+                                        <small class="text-muted">Orden: {{this.orden}}</small>
+                                    </div>
+                                    <div class="btn-group">
+                                        <a href="/contenido/{{this.id}}/editar" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-pencil me-1"></i>Editar
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarContenido({{this.id}})">
+                                            <i class="bi bi-trash me-1"></i>Eliminar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {{/each}}
+                        </div>
+                        {{else}}
+                        <p class="text-muted text-center mb-0">No hay contenidos en esta lección</p>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nuevo Contenido -->
+    <div class="modal fade" id="nuevoContenidoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nuevo Contenido</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="contenidoForm" action="/contenido/crear" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="leccion_id" value="{{leccion.id}}">
+                        <div class="mb-3">
+                            <label class="form-label">Título</label>
+                            <input type="text" class="form-control" name="titulo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contenido (Markdown)</label>
+                            <textarea class="form-control" name="contenido" rows="10" required></textarea>
+                            <small class="text-muted">Puedes usar Markdown para formatear el contenido</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Orden</label>
+                            <input type="number" class="form-control" name="orden" min="1" value="{{nextOrden}}" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Contenido</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function eliminarLeccion() {
+            if (confirm('¿Estás seguro de que deseas eliminar esta lección? Esta acción no se puede deshacer.')) {
+                try {
+                    const response = await fetch(`/leccion/{{leccion.id}}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        window.location.href = '/curso/{{curso.id}}/lecciones';
+                    } else {
+                        alert('Error al eliminar la lección');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al eliminar la lección');
+                }
+            }
+        }
+
+        async function eliminarContenido(contenidoId) {
+            if (confirm('¿Estás seguro de que deseas eliminar este contenido?')) {
+                try {
+                    const response = await fetch(`/contenido/${contenidoId}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Error al eliminar el contenido');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al eliminar el contenido');
+                }
+            }
+        }
+    </script>
+</body>
+</html> 

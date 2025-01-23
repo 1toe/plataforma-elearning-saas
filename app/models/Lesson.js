@@ -26,6 +26,30 @@ class Lesson {
             });
         });
     }
+
+    static create(lessonData) {
+        return new Promise((resolve, reject) => {
+            const sql = `
+                INSERT INTO lessons 
+                (course_id, titulo, descripcion, orden)
+                VALUES (?, ?, ?, ?)
+            `;
+
+            db.run(
+                sql,
+                [
+                    lessonData.course_id,
+                    lessonData.titulo,
+                    lessonData.descripcion,
+                    lessonData.orden
+                ],
+                function (err) {
+                    if (err) reject(err);
+                    else resolve(this.lastID);
+                }
+            );
+        });
+    }
 }
 
 module.exports = Lesson;

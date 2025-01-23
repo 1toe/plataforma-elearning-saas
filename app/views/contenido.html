@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contenido de la Lección</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/marked/marked.min.js">
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    <div class="container py-4">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/cursos">Cursos</a></li>
+                <li class="breadcrumb-item"><a href="/curso/{{curso.id}}">{{curso.nombre}}</a></li>
+                <li class="breadcrumb-item"><a href="/curso/{{curso.id}}/lecciones">Lecciones</a></li>
+                <li class="breadcrumb-item active">{{leccion.titulo}}</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <!-- Contenido Principal -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">{{leccion.titulo}}</h5>
+                        {{#if isTeacher}}
+                        <div class="btn-group">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#nuevoContenidoModal">
+                                <i class="bi bi-plus-circle me-2"></i>Agregar Contenido
+                            </button>
+                            <a href="/leccion/{{leccion.id}}/editar" class="btn btn-outline-secondary">
+                                <i class="bi bi-pencil me-2"></i>Editar Lección
+                            </a>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="card-body">
+                        {{#if contenidos.length}}
+                        <div class="contenido-list">
+                            {{#each contenidos}}
+                            <div class="contenido-item mb-4">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="mb-0">{{this.titulo}}</h6>
+                                    {{#if ../isTeacher}}
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="editarContenido({{this.id}})">
+                                            <i class="bi bi-pencil me-1"></i>Editar
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarContenido({{this.id}})">
+                                            <i class="bi bi-trash me-1"></i>Eliminar
+                                        </button>
+                                    </div>
+                                    {{/if}}
+                                </div>
+                                <div class="contenido-texto markdown-body">
+                                    {{{this.contenido}}}
+                                </div>
+                            </div>
+                            {{/each}}
+                        </div>
+                        {{else}}
+                        <div class="text-center py-4">
+                            <p class="text-muted mb-0">No hay contenido disponible</p>
+                            {{#if isTeacher}}
+                            <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#nuevoContenidoModal">
+                                <i class="bi bi-plus-circle me-2"></i>Agregar Primer Contenido
+                            </button>
+                            {{/if}}
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+
+                <!-- Navegación entre lecciones -->
+                <div class="d-flex justify-content-between mt-4">
+                    {{#if leccionAnterior}}
+                    <a href="/leccion/{{leccionAnterior.id}}/contenido" class="btn btn-outline-primary">
+                        <i class="bi bi-arrow-left me-2"></i>{{leccionAnterior.titulo}}
+                    </a>
+                    {{else}}
+                    <div></div>
+                    {{/if}}
+
+                    {{#if leccionSiguiente}}
+                    <a href="/leccion/{{leccionSiguiente.id}}/contenido" class="btn btn-outline-primary">
+                        {{leccionSiguiente.titulo}}<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                    {{else}}
+                    <div></div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nuevo Contenido -->
+    {{#if isTeacher}}
+    <div class="modal fade" id="nuevoContenidoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nuevo Contenido</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="contenidoForm" action="/contenido/crear" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="leccion_id" value="{{leccion.id}}">
+                        <div class="mb-3">
+                            <label class="form-label">Título</label>
+                            <input type="text" class="form-control" name="titulo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contenido (Markdown)</label>
+                            <textarea class="form-control" name="contenido" rows="10" required></textarea>
+                            <small class="text-muted">Puedes usar Markdown para formatear el contenido</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Orden</label>
+                            <input type="number" class="form-control" name="orden" min="1" value="1" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Contenido</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{/if}}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        // Convertir Markdown a HTML
+        document.addEventListener('DOMContentLoaded', () => {
+            const contenidos = document.querySelectorAll('.contenido-texto');
+            contenidos.forEach(contenido => {
+                contenido.innerHTML = marked.parse(contenido.textContent);
+            });
+        });
+
+        async function eliminarContenido(contenidoId) {
+            if (confirm('¿Estás seguro de que deseas eliminar este contenido?')) {
+                try {
+                    const response = await fetch(`/contenido/${contenidoId}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Error al eliminar el contenido');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al eliminar el contenido');
+                }
+            }
+        }
+
+        async function editarContenido(contenidoId) {
+            // Implementar la edición de contenido
+            window.location.href = `/contenido/${contenidoId}/editar`;
+        }
+    </script>
+</body>
+</html> 

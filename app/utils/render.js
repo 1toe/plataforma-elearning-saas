@@ -14,7 +14,16 @@ function getNavbar(isAuthenticated, userRole = "") {
     const teacherNavbar = `
         <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
         <li class="nav-item"><a class="nav-link" href="/cursos">Cursos</a></li>
-        <li class="nav-item"><a class="nav-link" href="/crear-cursos">Crear Cursos</a></li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                Gestionar
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/crear-cursos">Crear Curso</a></li>
+                <li><a class="dropdown-item" href="/crear-leccion">Crear Lección</a></li>
+                <li><a class="dropdown-item" href="/crear-contenido">Crear Contenido</a></li>
+            </ul>
+        </li>
         <li class="nav-item"><a class="nav-link" href="/perfil">Perfil</a></li>
         <li class="nav-item"><a class="nav-link" href="/logout">Salir</a></li>`;
 
