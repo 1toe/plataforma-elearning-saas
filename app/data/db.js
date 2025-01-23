@@ -111,6 +111,46 @@ const initDB = () => {
                 )
             `);
 
+        // Add these new tables to the initDB function
+        db.run(`
+            CREATE TABLE IF NOT EXISTS questions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                lesson_id INTEGER NOT NULL,
+                question_text TEXT NOT NULL,
+                question_type TEXT CHECK(question_type IN ('multiple_choice', 'true_false', 'open')) NOT NULL,
+                points INTEGER DEFAULT 1,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE
+            )
+        `);
+
+        db.run(`
+            CREATE TABLE IF NOT EXISTS answers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                question_id INTEGER NOT NULL,
+                answer_text TEXT NOT NULL,
+                is_correct BOOLEAN NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
+            )
+        `);
+
+        db.run(`
+            CREATE TABLE IF NOT EXISTS student_answers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_id INTEGER NOT NULL,
+                question_id INTEGER NOT NULL,
+                answer_id INTEGER,
+                answer_text TEXT,
+                is_correct BOOLEAN,
+                points_earned INTEGER DEFAULT 0,
+                submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE,
+                FOREIGN KEY (answer_id) REFERENCES answers(id) ON DELETE CASCADE
+            )
+        `);
+
         console.log("Tablas inicializadas.");
     });
 };

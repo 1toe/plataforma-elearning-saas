@@ -76,6 +76,27 @@ class Usuario {
             });
         });
     }
+
+    // Add this method to the Usuario class
+    static getEnrollments(userId) {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT e.*, c.nombre as course_name 
+                FROM enrollments e
+                JOIN courses c ON e.course_id = c.id
+                WHERE e.user_id = ?
+                ORDER BY e.fecha_inscripcion DESC
+            `;
+            
+            db.all(query, [userId], (err, rows) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
+    }
 }
 
 module.exports = Usuario;
