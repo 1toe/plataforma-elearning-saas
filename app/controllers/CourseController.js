@@ -13,8 +13,21 @@ const courseController = {
         req.on('end', async () => {
             try {
                 const courseData = new URLSearchParams(body);
+                
+                // Obtener el último código de curso
+                const lastCourse = await Course.findLastCode();
+                let nextCode = 1;
+                
+                if (lastCourse && lastCourse.codigo) {
+                    // Si existe un último curso, incrementar el código
+                    nextCode = parseInt(lastCourse.codigo) + 1;
+                }
+                
+                // Formatear el código para que siempre tenga 6 dígitos
+                const codigo = nextCode.toString().padStart(6, '0');
+                
                 const course = {
-                    codigo: courseData.get('codigo'),
+                    codigo: codigo,
                     nombre: courseData.get('nombre'),
                     descripcion: courseData.get('descripcion'),
                     fecha_inicio: courseData.get('fecha_inicio'),
@@ -154,8 +167,16 @@ const courseController = {
                     return;
                 }
 
+                // Obtener el curso actual para mantener el código original
+                const currentCourse = await Course.findById(courseId);
+                if (!currentCourse) {
+                    res.writeHead(404, { 'Content-Type': 'text/plain' });
+                    res.end('Curso no encontrado');
+                    return;
+                }
+
                 const updatedCourse = {
-                    codigo: courseData.get('codigo'),
+                    codigo: currentCourse.codigo, // Mantener el código original
                     nombre: courseData.get('nombre'),
                     descripcion: courseData.get('descripcion'),
                     fecha_inicio: courseData.get('fecha_inicio'),

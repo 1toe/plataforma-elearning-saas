@@ -166,9 +166,9 @@ const rutas = async (req, res) => {
         }
 
         if (path.match(/^\/curso\/\d+\/lecciones$/) && req.method === "GET") {
-            if (!isAuthenticated || userRole !== "docente") {
-                res.writeHead(403, { "Content-Type": "text/html" });
-                res.end(render("403.html", { title: "Acceso Denegado" }));
+            if (!isAuthenticated) {
+                res.writeHead(302, { Location: "/auth/login" });
+                res.end();
                 return;
             }
             const courseId = path.split('/')[2];
@@ -203,6 +203,30 @@ const rutas = async (req, res) => {
             }
             const courseId = path.split('/')[2];
             return CourseController.newTest(req, res, { isAuthenticated, userRole, courseId });
+        }
+
+        // Ruta para ver el contenido de un curso
+        if (path.match(/^\/curso\/\d+\/contenido$/)) {
+            const courseId = path.split('/')[2];
+            const CourseContentController = require('../controllers/CourseContentController');
+            await CourseContentController.showCourseContent(req, res, { isAuthenticated, userRole, courseId });
+            return;
+        }
+
+        // Ruta para ver el contenido de una lección
+        if (path.match(/^\/leccion\/(\d+)\/contenido$/)) {
+            const lessonId = path.match(/^\/leccion\/(\d+)\/contenido$/)[1];
+            const ContentController = require('../controllers/ContentController');
+            await ContentController.showContent(req, res, { isAuthenticated, userRole, userId, lessonId });
+            return;
+        }
+
+        // Ruta para marcar una lección como completada
+        if (path.match(/^\/leccion\/\d+\/completar$/) && req.method === 'POST') {
+            const lessonId = path.split('/')[2];
+            const ContentController = require('../controllers/ContentController');
+            await ContentController.markAsCompleted(req, res, { lessonId });
+            return;
         }
 
         res.writeHead(404, { "Content-Type": "text/html" });

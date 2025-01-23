@@ -45,14 +45,20 @@ const initDB = () => {
         db.run(`
             CREATE TABLE IF NOT EXISTS courses (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                codigo TEXT NOT NULL,
+                codigo TEXT UNIQUE NOT NULL,
                 nombre TEXT NOT NULL,
                 descripcion TEXT,
                 fecha_inicio TEXT,
                 fecha_fin TEXT,
-                estado TEXT,
+                estado TEXT CHECK(estado IN ('activo', 'inactivo', 'borrador')) NOT NULL,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             )
+        `);
+
+        // Crear índice para el código de curso si no existe
+        db.run(`
+            CREATE INDEX IF NOT EXISTS idx_courses_codigo 
+            ON courses(codigo)
         `);
 
         // Crear tabla 'lessons'

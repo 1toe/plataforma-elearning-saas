@@ -5,8 +5,8 @@ class Content {
         return new Promise((resolve, reject) => {
             const sql = `
                 INSERT INTO content 
-                (lesson_id, titulo, contenido, orden)
-                VALUES (?, ?, ?, ?)
+                (lesson_id, titulo, contenido)
+                VALUES (?, ?, ?)
             `;
 
             db.run(
@@ -14,8 +14,7 @@ class Content {
                 [
                     contentData.lesson_id,
                     contentData.titulo,
-                    contentData.contenido,
-                    contentData.orden || 1
+                    contentData.contenido
                 ],
                 function (err) {
                     if (err) reject(err);
@@ -28,10 +27,10 @@ class Content {
     static findByLessonId(lessonId) {
         return new Promise((resolve, reject) => {
             const sql = `
-                SELECT id, titulo, contenido, orden, created_at
+                SELECT id, titulo, contenido, created_at
                 FROM content
                 WHERE lesson_id = ?
-                ORDER BY orden ASC, created_at ASC
+                ORDER BY created_at ASC
             `;
             
             db.all(sql, [lessonId], (err, rows) => {
@@ -44,7 +43,7 @@ class Content {
     static findById(id) {
         return new Promise((resolve, reject) => {
             const sql = `
-                SELECT id, lesson_id, titulo, contenido, orden
+                SELECT id, lesson_id, titulo, contenido
                 FROM content
                 WHERE id = ?
             `;
@@ -60,7 +59,7 @@ class Content {
         return new Promise((resolve, reject) => {
             const sql = `
                 UPDATE content
-                SET titulo = ?, contenido = ?, orden = ?
+                SET titulo = ?, contenido = ?
                 WHERE id = ?
             `;
 
@@ -69,7 +68,6 @@ class Content {
                 [
                     contentData.titulo,
                     contentData.contenido,
-                    contentData.orden || 1,
                     id
                 ],
                 function (err) {

@@ -16,7 +16,12 @@ class Lesson {
 
     static findByCourseId(courseId) {
         return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM lessons WHERE course_id = ?';
+            const query = `
+                SELECT * FROM lessons 
+                WHERE course_id = ? 
+                ORDER BY orden ASC
+            `;
+            
             db.all(query, [courseId], (err, rows) => {
                 if (err) {
                     reject(err);
