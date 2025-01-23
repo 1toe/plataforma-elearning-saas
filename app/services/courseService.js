@@ -1,8 +1,23 @@
-const { createCourse } = require('../models/Course');
+const Course = require('../models/Course');
 
-const addCourse = (courseData, callback) => {
-    const { codigo, nombre, descripcion, fecha_inicio, fecha_fin, estado } = courseData;
-    createCourse(codigo, nombre, descripcion, fecha_inicio, fecha_fin, estado, callback);
+const courseService = {
+    addCourse: async (courseData) => {
+        try {
+            const courseId = await Course.create(courseData);
+            return courseId;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    getAllCourses: async () => {
+        try {
+            const courses = await Course.findAll();
+            return courses;
+        } catch (error) {
+            throw error;
+        }
+    }
 };
 
-module.exports = { addCourse };
+module.exports = courseService;

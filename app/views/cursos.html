@@ -1,31 +1,93 @@
-{% extends "mainlayout.html" %}
-
-{% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-primary text-white text-center">
-                    <span>🤓</span>
-                    <span>Tus cursos</span>
-                    <span>📕</span>
-                </div>
-                <div class="card-body">
-                    <div class="space-grid">
-                        {% for curso in cursos %}
-                        <div class="space-card">
-                            <div class="space-title">{{ curso.emoji }} {{ curso.nombre }}</div>
-                            <div class="space-description">{{ curso.descripcion }}</div>
-                            <div class="space-info">
-                                <span>📅 {{ curso.fecha_inicio }} - {{ curso.fecha_fin }}</span>
-                                <span>📌 {{ curso.estado }}</span>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursos - Elearn</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/assets/css/style-cursos.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="mb-4">Cursos Disponibles</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="cursos-container">
+            
         </div>
     </div>
-</div>
-{% endblock %}
+
+    <script>
+        function getBadgeClass(estado) {
+            switch(estado) {
+                case 'activo': return 'bg-success';
+                case 'inactivo': return 'bg-secondary';
+                default: return 'bg-warning';
+            }
+        }
+
+        function createCourseCard(curso) {
+            return `
+                <div class="col">
+                    <div class="card h-100 curso-card">
+                        <div class="card-header bg-light">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge ${getBadgeClass(curso.estado)}">
+                                    ${curso.estado.charAt(0).toUpperCase() + curso.estado.slice(1)}
+                                </span>
+                                <small class="text-muted">#${curso.codigo}</small>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">${curso.nombre}</h5>
+                            <p class="card-text text-muted small">${curso.descripcion}</p>
+
+                            <div class="mt-4">
+                                <div class="row small">
+                                    <div class="col-6">
+                                        <div class="text-muted">Inicio</div>
+                                        <div class="fw-bold">${curso.fecha_inicio}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-muted">Fin</div>
+                                        <div class="fw-bold">${curso.fecha_fin}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between align-items-center small">
+                                <span class="text-muted">
+                                    Creado: ${curso.created_at}
+                                </span>
+                                <a href="/cursos/${curso.id}" class="btn btn-sm btn-outline-primary">
+                                    Ver <i class="bi bi-arrow-right-short"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Cargar los cursoss
+        document.addEventListener('DOMContentLoaded', () => {
+            const cursosContainer = document.getElementById('cursos-container');
+            const cursos = JSON.parse('{{cursos}}');
+
+            if (cursos && cursos.length > 0) {
+                cursosContainer.innerHTML = cursos.map(curso => createCourseCard(curso)).join('');
+            } else {
+                cursosContainer.innerHTML = `
+                    <div class="col-12 text-center">
+                        <p class="text-muted">No hay cursos disponibles en este momento.</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

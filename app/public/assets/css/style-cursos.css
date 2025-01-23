@@ -1,167 +1,36 @@
-body {
-    background-color: #212529;
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-.header {
-    background-color: #212529;
-    color: white;
-    padding: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.header span {
-    margin: 0 0.5rem;
-    font-size: 1.2rem;
-}
-
-.header span:first-child,
-.header span:last-child {
-    font-size: 1.5rem;
-}
-
-.space-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    grid-gap: 1rem;
-    padding: 1rem;
-}
-
+/* Elimina estilos redundantes y ajusta para Bootstrap */
 .space-card {
     background-image: linear-gradient(to bottom, #6f42c1, #a363e3);
     color: white;
-    padding: 1rem;
+    padding: 1.5rem;
     border-radius: 0.5rem;
     box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
     min-height: 250px;
     position: relative;
     overflow: hidden;
+    transition: transform 0.3s ease;
+    /* Efecto hover */
 }
 
-.space-card::before {
-    content: '📚';
-    position: absolute;
-    font-size: 5rem;
-    opacity: 0.1;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.space-card:hover {
+    transform: translateY(-5px);
 }
 
 .space-title {
-    font-weight: bold;
+    font-weight: 700;
     font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    z-index: 1;
-}
-
-.space-platform {
-    background-color: #d3d3d3;
-    padding: 0.2rem 0.5rem;
-    border-radius: 0.2rem;
-    margin-bottom: 0.5rem;
-    color: #555;
-    font-size: 0.8rem;
-    align-self: flex-start;
-}
-
-.space-likes {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 1rem;
-}
-
-.space-likes span {
-    color: #dc3545;
-    margin-right: 0.3rem;
-}
-
-.space-icon {
-    margin: 1rem 0;
-    max-width: 80px;
-    max-height: 80px;
-    width: auto;
-    height: auto;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+    margin-bottom: 1rem;
 }
 
 .space-description {
-    color: lightgray;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 1rem;
-    line-height: 1.5;
-    margin-bottom: 1rem;
-    flex-grow: 1;
-    z-index: 1;
+    margin-bottom: 1.5rem;
 }
 
 .space-info {
-    color: lightgray;
+    color: rgba(255, 255, 255, 0.9);
     font-size: 0.9rem;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    z-index: 1;
-}
-
-.space-author {
-    color: white;
-    margin-right: 0.5rem;
-    display: flex;
-    align-items: center;
-}
-
-.space-author img {
-    width: 1.2rem;
-    height: 1.2rem;
-    border-radius: 50%;
-    margin-right: 0.3rem;
-}
-
-.space-card:nth-child(1) {
-    background-image: linear-gradient(to bottom, #6f42c1, #a363e3);
-}
-
-.space-card:nth-child(2) {
-    background-image: linear-gradient(to bottom, #e94560, #f9846e);
-}
-
-.space-card:nth-child(3) {
-    background-image: linear-gradient(to bottom, #c23b22, #e95932);
-}
-
-.space-card:nth-child(4) {
-    background-image: linear-gradient(to bottom, #6f42c1, #a363e3);
-}
-
-.space-card:nth-child(5) {
-    background-image: linear-gradient(to bottom, #9c27b0, #bb47c6);
-}
-
-.space-card:nth-child(6) {
-    background-image: linear-gradient(to bottom, #ff5722, #ff8c37);
-}
-
-.space-card:nth-child(7) {
-    background-image: linear-gradient(to bottom, #3f51b5, #5c6bc0);
-}
-
-.space-card:nth-child(8) {
-    background-image: linear-gradient(to bottom, #e94560, #f9846e);
-}
-
-@media (max-width: 600px) {
-    .space-grid {
-        grid-template-columns: 1fr;
-    }
 }

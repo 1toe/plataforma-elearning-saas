@@ -28,7 +28,7 @@ const rutas = async (req, res) => {
 
         // Add courses route
         if (path === "/cursos") {
-            return await CourseController.showCourses(req, res, {isAuthenticated, userRole});
+            return await CourseController.showCourses(req, res, { isAuthenticated, userRole });
         }
 
         if (req.url === "/" && req.method === "GET") {
@@ -72,19 +72,19 @@ const rutas = async (req, res) => {
             res.end();
             return;
         }
-
-        if (req.url === "/cursos" && req.method === "GET") {
-            if (!isAuthenticated) {
-                res.writeHead(302, { Location: "/auth/login" });
-                res.end();
-                return;
-            }
-            const html = render("cursos.html", { title: "Cursos" }, isAuthenticated, userRole);
-            res.writeHead(200, { "Content-Type": "text/html" });
-            res.end(html);
-            return;
-        }
-
+        /** 
+                if (req.url === "/cursos" && req.method === "GET") {
+                    if (!isAuthenticated) {
+                        res.writeHead(302, { Location: "/auth/login" });
+                        res.end();
+                        return;
+                    }
+                    const html = render("cursos.html", { title: "Cursos" }, isAuthenticated, userRole);
+                    res.writeHead(200, { "Content-Type": "text/html" });
+                    res.end(html);
+                    return;
+                }
+        */
         if (req.url === "/perfil" && req.method === "GET") {
             if (!isAuthenticated) {
                 res.writeHead(302, { Location: "/auth/login" });

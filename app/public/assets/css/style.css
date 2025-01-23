@@ -257,3 +257,37 @@ button:hover {
 .toast:hover {
   opacity: 1;
 }
+
+.curso-card {
+    transition: transform 0.2s ease-in-out;
+    border: 1px solid rgba(0,0,0,0.125);
+}
+
+.curso-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.curso-card .card-header {
+    border-bottom: 1px solid rgba(0,0,0,0.125);
+}
+
+.curso-card .badge {
+    font-size: 0.8rem;
+    padding: 0.4em 0.8em;
+}
+
+.curso-card .card-title {
+    color: #2c3e50;
+    font-size: 1.25rem;
+}
+
+.curso-card .btn-outline-primary {
+    border-width: 1px;
+    font-size: 0.875rem;
+}
+
+.curso-card .btn-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+}
