@@ -95,6 +95,8 @@
         const leccionAnterior = '{{leccionAnterior}}' !== 'null' ? JSON.parse('{{leccionAnterior}}') : null;
         const leccionSiguiente = '{{leccionSiguiente}}' !== 'null' ? JSON.parse('{{leccionSiguiente}}') : null;
         const isCompleted = '{{isCompleted}}' === 'true';
+        const curso = JSON.parse('{{curso}}');
+        console.log(curso); // Verifica que el objeto curso tenga la propiedad nombre
 
         // Inicializar la página
         function initializePage() {

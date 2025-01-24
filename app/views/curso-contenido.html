@@ -15,7 +15,7 @@
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/cursos">Cursos</a></li>
-                <li class="breadcrumb@-item active">{{curso.nombre}}</li>
+                <li class="breadcrumb-item active">{{curso.nombre}}</li>
             </ol>
         </nav>
 
@@ -24,8 +24,6 @@
                 <!-- Información del Curso -->
                 <div class="card mb-4">
                     <div class="card-body">
-                        <h4 class="card-title">{{curso.nombre}}</h4>
-                        <p class="text-muted mb-2">{{curso.descripcion}}</p>
                         <div class="progress mb-3" style="height: 10px;">
                             <div class="progress-bar" role="progressbar" id="progressBar" style="width: 0%"></div>
                         </div>
@@ -33,7 +31,7 @@
                             <small class="text-muted" id="progressText">0/0 lecciones completadas</small>
                             <div>
                                 <span class="badge bg-{{curso.estado === 'activo' ? 'success' : 'warning'}}">
-                                    {{curso.estado}}
+                                    
                                 </span>
                             </div>
                         </div>
@@ -124,6 +122,8 @@
 
         // Inicializar cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', initializePage);
+
+        console.log(curso); // Verifica que el objeto curso tenga la propiedad nombre
     </script>
 </body>
 
