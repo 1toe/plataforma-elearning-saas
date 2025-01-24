@@ -1,22 +1,49 @@
 const db = require('../data/db');
 
 class Question {
-    static async create({ course_id, question_text, points }) {
-        const query = `
-            INSERT INTO questions (course_id, question_text, points)
-            VALUES (?, ?, ?)
-        `;
-        const result = await db.run(query, [course_id, question_text, points]);
-        return result.lastID;
+    static async findByCourseId(courseId) {
+        return new Promise((resolve, reject) => {
+            db.all(
+                'SELECT * FROM questions WHERE course_id = ? ORDER BY id ASC',
+                [courseId],
+                (err, rows) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve(rows || []);
+                }
+            );
+        });
     }
 
-    static async findByCourseId(courseId) {
-        const query = `
-            SELECT * FROM questions
-            WHERE course_id = ?
-            ORDER BY id ASC
-        `;
-        return await db.all(query, [courseId]);
+    static async create(questionData) {
+        return new Promise((resolve, reject) => {
+            const { course_id, question_text, question_type, points } = questionData;
+            db.run(
+                'INSERT INTO questions (course_id, question_text, question_type, points) VALUES (?, ?, ?, ?)',
+                [course_id, question_text, question_type, points || 1],
+                function(err) {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve(this.lastID);
+                }
+            );
+        });
+    }
+
+    static async delete(id) {
+        return new Promise((resolve, reject) => {
+            db.run('DELETE FROM questions WHERE id = ?', [id], (err) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve();
+            });
+        });
     }
 
     static async findById(id) {

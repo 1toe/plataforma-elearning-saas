@@ -135,14 +135,31 @@ const rutas = async (req, res) => {
             return ContentController.create(req, res);
         }
 
-        if (path.match(/^\/curso\/\d+\/test$/) && req.method === "GET") {
+        // Ruta para mostrar el test de un curso
+        if (path.match(/^\/curso\/\d+\/test$/)) {
             if (!isAuthenticated) {
                 res.writeHead(302, { Location: "/auth/login" });
                 res.end();
                 return;
             }
+            
+            // Extraer el ID del curso de la URL y agregarlo a req.params
             const courseId = path.split('/')[2];
-            return CourseController.showTest(req, res, { isAuthenticated, userRole, courseId });
+            req.params = { ...req.params, id: courseId };
+            
+            console.log('Parámetros enviados al controlador:', {
+                isAuthenticated,
+                userRole,
+                userId,
+                params: req.params
+            });
+
+            await CourseController.showTest(req, res, { 
+                isAuthenticated, 
+                userRole, 
+                userId 
+            });
+            return;
         }
 
         if (path.match(/^\/curso\/\d+\/pregunta$/) && req.method === "POST") {
@@ -210,13 +227,6 @@ const rutas = async (req, res) => {
             const courseId = path.split('/')[2];
             const CourseContentController = require('../controllers/CourseContentController');
             await CourseContentController.showCourseContent(req, res, { isAuthenticated, userRole, userId, courseId });
-            return;
-        }
-
-        // Ruta para ver el test de un curso
-        if (path.match(/^\/curso\/\d+\/test$/)) {
-            const courseId = path.split('/')[2];
-            await CourseController.showTest(req, res, { isAuthenticated, userRole, userId, courseId });
             return;
         }
 

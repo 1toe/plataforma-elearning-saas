@@ -73,40 +73,98 @@ const courseController = {
         }
     },
 
-    showTest: async (req, res, { isAuthenticated, userRole, courseId }) => {
+    showTest: async (req, res, { isAuthenticated, userRole, userId }) => {
         try {
-            // Obtener el curso
-            const course = await Course.findById(courseId);
-            if (!course) {
-                res.writeHead(404, { 'Content-Type': 'text/plain' });
-                res.end('Curso no encontrado');
+            console.log('Recibiendo petición showTest:', {
+                params: req.params,
+                isAuthenticated,
+                userRole,
+                userId
+            });
+
+            const courseId = parseInt(req.params.id);
+            if (!courseId) {
+                console.log('ID de curso no proporcionado o inválido');
+                const html = render('500.html', { 
+                    title: 'Error', 
+                    message: 'ID de curso no proporcionado' 
+                }, isAuthenticated, userRole);
+                res.writeHead(400, { "Content-Type": "text/html" });
+                res.end(html);
                 return;
             }
 
-            // Obtener preguntas del curso
-            const questions = await Question.findByCourseId(courseId) || [];
-            console.log('Preguntas encontradas:', questions);
+            // Obtener el curso
+            const course = await Course.findById(courseId);
+            console.log('Curso encontrado:', course);
 
-            // Para cada pregunta, obtener sus respuestas
-            const questionsWithAnswers = await Promise.all(questions.map(async (question) => {
-                const answers = await Answer.findByQuestionId(question.id) || [];
-                return { ...question, answers };
-            }));
+            if (!course) {
+                console.log('Curso no encontrado para ID:', courseId);
+                const html = render('404.html', { 
+                    title: 'No encontrado' 
+                }, isAuthenticated, userRole);
+                res.writeHead(404, { "Content-Type": "text/html" });
+                res.end(html);
+                return;
+            }
 
-            // Renderizar la vista
+            // Obtener las preguntas del curso
+            const questions = await Question.findByCourseId(courseId);
+            console.log('Preguntas encontradas:', questions ? questions.length : 0);
+            
+            // Si no hay preguntas, pasar un array vacío
+            if (!questions || questions.length === 0) {
+                console.log('No se encontraron preguntas para el curso');
+                const html = render('test-curso.html', {
+                    title: `Test - ${course.nombre}`,
+                    curso_id: course.id,
+                    curso_nombre: course.nombre,
+                    preguntas: "[]",
+                    isTeacher: userRole === 'docente' ? "true" : "false"
+                }, isAuthenticated, userRole);
+                res.writeHead(200, { "Content-Type": "text/html" });
+                res.end(html);
+                return;
+            }
+
+            // Obtener las respuestas para cada pregunta
+            const questionsWithAnswers = await Promise.all(
+                questions.map(async (question) => {
+                    const answers = await Answer.findByQuestionId(question.id);
+                    return {
+                        ...question,
+                        respuestas: answers || []
+                    };
+                })
+            );
+
+            console.log('Preguntas con respuestas preparadas:', 
+                questionsWithAnswers.length);
+
+            // Escapar las comillas en el JSON para evitar problemas con el parsing
+            const preguntasJSON = JSON.stringify(questionsWithAnswers)
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '\\"');
+
             const html = render('test-curso.html', {
                 title: `Test - ${course.nombre}`,
-                curso: course,
-                questions: JSON.stringify(questionsWithAnswers),
-                isTeacher: userRole === 'docente'
+                curso_id: course.id,
+                curso_nombre: course.nombre,
+                preguntas: preguntasJSON,
+                isTeacher: userRole === 'docente' ? "true" : "false"
             }, isAuthenticated, userRole);
-
-            res.writeHead(200, { 'Content-Type': 'text/html' });
+            
+            res.writeHead(200, { "Content-Type": "text/html" });
             res.end(html);
+
         } catch (error) {
-            console.error('Error al mostrar test:', error);
-            res.writeHead(500, { 'Content-Type': 'text/plain' });
-            res.end('Error interno del servidor');
+            console.error('Error detallado al mostrar el test:', error);
+            const html = render('500.html', { 
+                title: 'Error del Servidor',
+                message: 'Ocurrió un error al cargar el test'
+            }, isAuthenticated, userRole);
+            res.writeHead(500, { "Content-Type": "text/html" });
+            res.end(html);
         }
     },
 

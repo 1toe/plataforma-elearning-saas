@@ -223,36 +223,67 @@ const initDB = () => {
                 (6, 5, true, CURRENT_TIMESTAMP),
                 (6, 6, false, CURRENT_TIMESTAMP)`);
 
-            // Insertar preguntas de ejemplo
+            // Insertar preguntas de ejemplo para Historia del Jazz
             db.run(`INSERT OR IGNORE INTO questions (course_id, question_text, question_type) VALUES 
                 (1, '¿En qué ciudad se originó el jazz?', 'multiple_choice'),
                 (1, '¿Quién es considerado el "Rey del Swing"?', 'multiple_choice'),
+                (1, '¿El jazz nació en el siglo XX?', 'true_false'),
                 (1, '¿Qué músico es conocido como el padre del Cool Jazz?', 'multiple_choice'),
-                (2, '¿Cuál es el modo más común usado en improvisación de jazz?', 'multiple_choice'),
-                (2, '¿Qué escala es fundamental para improvisar en blues?', 'multiple_choice')`);
+                (1, '¿El bebop fue anterior al swing?', 'true_false')`);
 
-            // Insertar respuestas de ejemplo
+            // Insertar preguntas para Técnicas de Improvisación
+            db.run(`INSERT OR IGNORE INTO questions (course_id, question_text, question_type) VALUES 
+                (2, '¿Cuál es el modo más común usado en improvisación de jazz?', 'multiple_choice'),
+                (2, '¿La escala pentatónica es fundamental para improvisar en blues?', 'true_false'),
+                (2, '¿Qué escala es esencial para improvisar sobre acordes dominantes?', 'multiple_choice'),
+                (2, '¿El II-V-I es la progresión más común en jazz?', 'true_false'),
+                (2, '¿Qué instrumento es considerado líder en una jam session típica?', 'multiple_choice')`);
+
+            // Insertar respuestas para las preguntas de Historia del Jazz
             db.run(`INSERT OR IGNORE INTO answers (question_id, answer_text, is_correct) VALUES 
-                (1, 'Nueva Orleans', true),
-                (1, 'Chicago', false),
-                (1, 'Nueva York', false),
-                (1, 'Memphis', false),
-                (2, 'Benny Goodman', true),
-                (2, 'Duke Ellington', false),
-                (2, 'Count Basie', false),
-                (2, 'Glenn Miller', false),
-                (3, 'Miles Davis', true),
-                (3, 'Charlie Parker', false),
-                (3, 'John Coltrane', false),
-                (3, 'Dizzy Gillespie', false),
-                (4, 'Modo Dórico', true),
-                (4, 'Modo Locrio', false),
-                (4, 'Modo Frigio', false),
-                (4, 'Modo Lidio', false),
-                (5, 'Escala Pentatónica', true),
-                (5, 'Escala Cromática', false),
-                (5, 'Escala Disminuida', false),
-                (5, 'Escala Alterada', false)`);
+                (1, 'Nueva Orleans', 1),
+                (1, 'Chicago', 0),
+                (1, 'Nueva York', 0),
+                (1, 'Memphis', 0),
+                
+                (2, 'Benny Goodman', 1),
+                (2, 'Duke Ellington', 0),
+                (2, 'Count Basie', 0),
+                (2, 'Glenn Miller', 0),
+                
+                (3, 'Verdadero', 1),
+                (3, 'Falso', 0),
+                
+                (4, 'Miles Davis', 1),
+                (4, 'Charlie Parker', 0),
+                (4, 'John Coltrane', 0),
+                (4, 'Dizzy Gillespie', 0),
+                
+                (5, 'Verdadero', 0),
+                (5, 'Falso', 1)`);
+
+            // Insertar respuestas para las preguntas de Técnicas de Improvisación
+            db.run(`INSERT OR IGNORE INTO answers (question_id, answer_text, is_correct) VALUES 
+                (6, 'Modo Dórico', 1),
+                (6, 'Modo Locrio', 0),
+                (6, 'Modo Frigio', 0),
+                (6, 'Modo Lidio', 0),
+                
+                (7, 'Verdadero', 1),
+                (7, 'Falso', 0),
+                
+                (8, 'Escala Alterada', 1),
+                (8, 'Escala Mayor', 0),
+                (8, 'Escala Menor Melódica', 0),
+                (8, 'Escala Disminuida', 0),
+                
+                (9, 'Verdadero', 1),
+                (9, 'Falso', 0),
+                
+                (10, 'Trompeta', 1),
+                (10, 'Piano', 0),
+                (10, 'Batería', 0),
+                (10, 'Contrabajo', 0)`);
         });
 
         console.log("Base de datos inicializada con datos de ejemplo.");
