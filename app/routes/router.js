@@ -16,11 +16,13 @@ const rutas = async (req, res) => {
         const isAuthenticated = cookies.loggedIn === "true";
         const email = cookies.email || "";
         let userRole = "";
+        let userId = null;
 
         if (isAuthenticated && email) {
             try {
                 const usuario = await Usuario.findByEmail(email);
                 userRole = usuario ? usuario.tipo_usuario : "";
+                userId = usuario ? usuario.id : null;
             } catch (error) {
                 console.error("Error al obtener el rol del usuario:", error.message);
             }
@@ -142,22 +144,12 @@ const rutas = async (req, res) => {
                 res.end();
                 return;
             }
-            
-            // Extraer el ID del curso de la URL y agregarlo a req.params
             const courseId = path.split('/')[2];
-            req.params = { ...req.params, id: courseId };
-            
-            console.log('Parámetros enviados al controlador:', {
+            req.params = { id: courseId };
+            await CourseController.showTest(req, res, {
                 isAuthenticated,
                 userRole,
-                userId,
-                params: req.params
-            });
-
-            await CourseController.showTest(req, res, { 
-                isAuthenticated, 
-                userRole, 
-                userId 
+                userId: userId
             });
             return;
         }
@@ -192,41 +184,16 @@ const rutas = async (req, res) => {
             return LessonController.showLessons(req, res, { isAuthenticated, userRole, courseId });
         }
 
+        // Ruta corregida para contenido del curso
         if (path.match(/^\/curso\/\d+\/contenido$/) && req.method === "GET") {
-            if (!isAuthenticated) {
-                res.writeHead(302, { Location: "/auth/login" });
-                res.end();
-                return;
-            }
-            const courseId = path.split('/')[2];
-            return ContentController.showContent(req, res, { isAuthenticated, userRole, courseId });
-        }
-
-        if (path.match(/^\/curso\/\d+\/editar$/) && req.method === "GET") {
-            if (!isAuthenticated || userRole !== "docente") {
-                res.writeHead(403, { "Content-Type": "text/html" });
-                res.end(render("403.html", { title: "Acceso Denegado" }));
-                return;
-            }
-            const courseId = path.split('/')[2];
-            return CourseController.editCourse(req, res, { isAuthenticated, userRole, courseId });
-        }
-
-        if (path.match(/^\/curso\/\d+\/test\/nuevo$/) && req.method === "GET") {
-            if (!isAuthenticated || userRole !== "docente") {
-                res.writeHead(403, { "Content-Type": "text/html" });
-                res.end(render("403.html", { title: "Acceso Denegado" }));
-                return;
-            }
-            const courseId = path.split('/')[2];
-            return CourseController.newTest(req, res, { isAuthenticated, userRole, courseId });
-        }
-
-        // Ruta para ver el contenido de un curso
-        if (path.match(/^\/curso\/\d+\/contenido$/)) {
             const courseId = path.split('/')[2];
             const CourseContentController = require('../controllers/CourseContentController');
-            await CourseContentController.showCourseContent(req, res, { isAuthenticated, userRole, userId, courseId });
+            await CourseContentController.showCourseContent(req, res, { 
+                isAuthenticated, 
+                userRole, 
+                userId: userId,
+                courseId 
+            });
             return;
         }
 

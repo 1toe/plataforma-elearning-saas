@@ -92,8 +92,12 @@ class Course {
         return new Promise((resolve, reject) => {
             const query = `SELECT * FROM courses WHERE id = ?`;
             db.get(query, [id], (err, row) => {
-                if (err) reject(err);
-                else resolve(row);
+                if (err) {
+                    console.error('Error al buscar curso por ID:', err);
+                    reject(err);
+                    return;
+                }
+                resolve(row);
             });
         });
     }

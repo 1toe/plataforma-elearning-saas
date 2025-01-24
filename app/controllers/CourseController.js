@@ -75,16 +75,8 @@ const courseController = {
 
     showTest: async (req, res, { isAuthenticated, userRole, userId }) => {
         try {
-            console.log('Recibiendo petición showTest:', {
-                params: req.params,
-                isAuthenticated,
-                userRole,
-                userId
-            });
-
             const courseId = parseInt(req.params.id);
             if (!courseId) {
-                console.log('ID de curso no proporcionado o inválido');
                 const html = render('500.html', { 
                     title: 'Error', 
                     message: 'ID de curso no proporcionado' 
@@ -96,10 +88,7 @@ const courseController = {
 
             // Obtener el curso
             const course = await Course.findById(courseId);
-            console.log('Curso encontrado:', course);
-
             if (!course) {
-                console.log('Curso no encontrado para ID:', courseId);
                 const html = render('404.html', { 
                     title: 'No encontrado' 
                 }, isAuthenticated, userRole);
@@ -110,11 +99,9 @@ const courseController = {
 
             // Obtener las preguntas del curso
             const questions = await Question.findByCourseId(courseId);
-            console.log('Preguntas encontradas:', questions ? questions.length : 0);
             
             // Si no hay preguntas, pasar un array vacío
             if (!questions || questions.length === 0) {
-                console.log('No se encontraron preguntas para el curso');
                 const html = render('test-curso.html', {
                     title: `Test - ${course.nombre}`,
                     curso_id: course.id,
@@ -133,13 +120,10 @@ const courseController = {
                     const answers = await Answer.findByQuestionId(question.id);
                     return {
                         ...question,
-                        respuestas: answers || []
+                        respuestas: answers
                     };
                 })
             );
-
-            console.log('Preguntas con respuestas preparadas:', 
-                questionsWithAnswers.length);
 
             // Escapar las comillas en el JSON para evitar problemas con el parsing
             const preguntasJSON = JSON.stringify(questionsWithAnswers)
@@ -158,10 +142,9 @@ const courseController = {
             res.end(html);
 
         } catch (error) {
-            console.error('Error detallado al mostrar el test:', error);
+            console.error('Error al mostrar el test:', error);
             const html = render('500.html', { 
-                title: 'Error del Servidor',
-                message: 'Ocurrió un error al cargar el test'
+                title: 'Error del Servidor' 
             }, isAuthenticated, userRole);
             res.writeHead(500, { "Content-Type": "text/html" });
             res.end(html);

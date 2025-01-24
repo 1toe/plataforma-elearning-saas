@@ -16,7 +16,7 @@ const courseContentController = {
 
             // Obtener lecciones del curso
             const lecciones = await Lesson.findByCourseId(courseId);
-            
+
             // Obtener progreso del usuario
             const progreso = await Progress.findByUserAndCourse(userId, courseId);
 
@@ -36,6 +36,7 @@ const courseContentController = {
             res.end('Error interno del servidor');
         }
     }
+
 };
 
 module.exports = courseContentController; 
