@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test del Curso</title>
+    <title>{{title}}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/assets/css/style.css">
@@ -26,9 +26,8 @@
                     </div>
                 </div>
 
-                <!-- Add this after the course info card for teachers -->
-                {{#if isTeacher}}
-                <div class="d-flex justify-content-end mb-4">
+                <!-- Teacher buttons -->
+                <div id="teacherButtons" style="display: none;" class="d-flex justify-content-end mb-4">
                     <div class="btn-group">
                         <a href="/curso/{{curso.id}}/lecciones" class="btn btn-outline-primary">
                             <i class="bi bi-book me-1"></i>Gestionar Lecciones
@@ -41,115 +40,150 @@
                         </a>
                     </div>
                 </div>
-                {{/if}}
 
                 <!-- Teacher View -->
-                {{#if isTeacher}}
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0">Gestionar Preguntas</h5>
-                    </div>
-                    <div class="card-body">
-                        <form id="question-form" action="/curso/{{curso.id}}/pregunta" method="POST">
-                            <div class="mb-3">
-                                <label class="form-label">Pregunta</label>
-                                <input type="text" class="form-control" name="question_text" required>
-                            </div>
-                            
-                            <div id="options-container">
+                <div id="teacherView" style="display: none;">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Gestionar Preguntas</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="question-form" action="/curso/{{curso.id}}/pregunta" method="POST">
                                 <div class="mb-3">
-                                    <label class="form-label">Opciones de Respuesta</label>
-                                    <div class="option-group mb-2">
-                                        <div class="input-group">
-                                            <div class="input-group-text">
-                                                <input type="radio" name="correct_answer" value="0" required>
+                                    <label class="form-label">Pregunta</label>
+                                    <input type="text" class="form-control" name="question_text" required>
+                                </div>
+                                
+                                <div id="options-container">
+                                    <div class="mb-3">
+                                        <label class="form-label">Opciones de Respuesta</label>
+                                        <div class="option-group mb-2">
+                                            <div class="input-group">
+                                                <div class="input-group-text">
+                                                    <input type="radio" name="correct_answer" value="0" required>
+                                                </div>
+                                                <input type="text" class="form-control" name="answers[]" required>
+                                                <button type="button" class="btn btn-outline-danger remove-option">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
                                             </div>
-                                            <input type="text" class="form-control" name="answers[]" required>
-                                            <button type="button" class="btn btn-outline-danger remove-option">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
                                         </div>
                                     </div>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mb-3" id="add-option">
+                                        <i class="bi bi-plus-circle me-1"></i>Agregar Opción
+                                    </button>
                                 </div>
-                                <button type="button" class="btn btn-outline-secondary btn-sm mb-3" id="add-option">
-                                    <i class="bi bi-plus-circle me-1"></i>Agregar Opción
+
+                                <div class="mb-3">
+                                    <label class="form-label">Puntos</label>
+                                    <input type="number" class="form-control" name="points" value="1" min="1" required>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save me-1"></i>Guardar Pregunta
                                 </button>
+                            </form>
+
+                            <hr>
+
+                            <div id="questions-list">
+                                <!-- Se llenará con JavaScript -->
                             </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Puntos</label>
-                                <input type="number" class="form-control" name="points" value="1" min="1" required>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-save me-1"></i>Guardar Pregunta
-                            </button>
-                        </form>
-
-                        <hr>
-
-                        <div id="questions-list">
-                            {{#each questions}}
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <h6 class="card-title">{{this.question_text}}</h6>
-                                    <div class="options-list">
-                                        {{#each this.answers}}
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" disabled {{#if this.is_correct}}checked{{/if}}>
-                                            <label class="form-check-label">{{this.answer_text}}</label>
-                                        </div>
-                                        {{/each}}
-                                    </div>
-                                    <div class="mt-2">
-                                        <small class="text-muted">Puntos: {{this.points}}</small>
-                                    </div>
-                                </div>
-                            </div>
-                            {{/each}}
                         </div>
                     </div>
                 </div>
-                {{/if}}
 
                 <!-- Student View -->
-                {{#if isStudent}}
-                <form id="test-form" action="/curso/{{curso.id}}/respuestas" method="POST">
-                    {{#each questions}}
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3">{{this.question_text}}</h5>
-                            <div class="options-list">
-                                {{#each this.answers}}
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" 
-                                           name="question_{{../id}}" 
-                                           value="{{this.id}}" 
-                                           required>
-                                    <label class="form-check-label">{{this.answer_text}}</label>
-                                </div>
-                                {{/each}}
-                            </div>
+                <div id="studentView" style="display: none;">
+                    <form id="test-form" action="/curso/{{curso.id}}/respuestas" method="POST">
+                        <div id="student-questions">
+                            <!-- Se llenará con JavaScript -->
                         </div>
-                    </div>
-                    {{/each}}
 
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-circle me-1"></i>Enviar Respuestas
-                        </button>
-                        <a href="/cursos" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left me-1"></i>Volver a Cursos
-                        </a>
-                    </div>
-                </form>
-                {{/if}}
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-1"></i>Enviar Respuestas
+                            </button>
+                            <a href="/cursos" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i>Volver a Cursos
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Variables globales
+        const isTeacher = '{{isTeacher}}' === 'true';
+        const questions = JSON.parse('{{questions}}');
+        const curso = JSON.parse('{{curso}}');
+
+        function initializePage() {
+            const teacherButtons = document.getElementById('teacherButtons');
+            const teacherView = document.getElementById('teacherView');
+            const studentView = document.getElementById('studentView');
+            const questionsList = document.getElementById('questions-list');
+            const studentQuestions = document.getElementById('student-questions');
+
+            // Mostrar vista según rol
+            if (isTeacher) {
+                teacherButtons.style.display = 'flex';
+                teacherView.style.display = 'block';
+                
+                // Mostrar preguntas existentes para profesor
+                if (questions && questions.length > 0) {
+                    questionsList.innerHTML = questions.map(question => `
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">${question.question_text}</h6>
+                                <div class="options-list">
+                                    ${question.answers.map(answer => `
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" disabled ${answer.is_correct ? 'checked' : ''}>
+                                            <label class="form-check-label">${answer.answer_text}</label>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <div class="mt-2">
+                                    <small class="text-muted">Puntos: ${question.points}</small>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } else {
+                studentView.style.display = 'block';
+                
+                // Mostrar preguntas para estudiante
+                if (questions && questions.length > 0) {
+                    studentQuestions.innerHTML = questions.map(question => `
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">${question.question_text}</h5>
+                                <div class="options-list">
+                                    ${question.answers.map(answer => `
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="radio" 
+                                                   name="question_${question.id}" 
+                                                   value="${answer.id}" 
+                                                   required>
+                                            <label class="form-check-label">${answer.answer_text}</label>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
+        // Inicializar cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+
             const addOptionBtn = document.getElementById('add-option');
             const optionsContainer = document.querySelector('#options-container .mb-3');
 

@@ -1,58 +1,73 @@
 const db = require('../data/db');
 
 class Lesson {
-    static findByUserId(userId) {
+    static async findById(id) {
         return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM lessons WHERE user_id = ?';
-            db.all(query, [userId], (err, rows) => {
+            db.get('SELECT * FROM lessons WHERE id = ?', [id], (err, row) => {
                 if (err) {
                     reject(err);
-                } else {
-                    resolve(rows);
+                    return;
                 }
+                resolve(row);
             });
         });
     }
 
-    static findByCourseId(courseId) {
+    static async findByCourseId(courseId) {
         return new Promise((resolve, reject) => {
-            const query = `
-                SELECT * FROM lessons 
-                WHERE course_id = ? 
-                ORDER BY orden ASC
-            `;
-            
-            db.all(query, [courseId], (err, rows) => {
+            db.all('SELECT * FROM lessons WHERE course_id = ? ORDER BY orden ASC', [courseId], (err, rows) => {
                 if (err) {
                     reject(err);
-                } else {
-                    resolve(rows);
+                    return;
                 }
+                resolve(rows);
             });
         });
     }
 
-    static create(lessonData) {
+    static async create(lessonData) {
         return new Promise((resolve, reject) => {
-            const sql = `
-                INSERT INTO lessons 
-                (course_id, titulo, descripcion, orden)
-                VALUES (?, ?, ?, ?)
-            `;
-
+            const { course_id, titulo, descripcion, orden } = lessonData;
             db.run(
-                sql,
-                [
-                    lessonData.course_id,
-                    lessonData.titulo,
-                    lessonData.descripcion,
-                    lessonData.orden
-                ],
-                function (err) {
-                    if (err) reject(err);
-                    else resolve(this.lastID);
+                'INSERT INTO lessons (course_id, titulo, descripcion, orden) VALUES (?, ?, ?, ?)',
+                [course_id, titulo, descripcion, orden],
+                function(err) {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve(this.lastID);
                 }
             );
+        });
+    }
+
+    static async update(id, lessonData) {
+        return new Promise((resolve, reject) => {
+            const { titulo, descripcion, orden, estado } = lessonData;
+            db.run(
+                'UPDATE lessons SET titulo = ?, descripcion = ?, orden = ?, estado = ? WHERE id = ?',
+                [titulo, descripcion, orden, estado, id],
+                (err) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve();
+                }
+            );
+        });
+    }
+
+    static async delete(id) {
+        return new Promise((resolve, reject) => {
+            db.run('DELETE FROM lessons WHERE id = ?', [id], (err) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve();
+            });
         });
     }
 }

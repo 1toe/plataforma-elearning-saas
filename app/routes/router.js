@@ -209,7 +209,14 @@ const rutas = async (req, res) => {
         if (path.match(/^\/curso\/\d+\/contenido$/)) {
             const courseId = path.split('/')[2];
             const CourseContentController = require('../controllers/CourseContentController');
-            await CourseContentController.showCourseContent(req, res, { isAuthenticated, userRole, courseId });
+            await CourseContentController.showCourseContent(req, res, { isAuthenticated, userRole, userId, courseId });
+            return;
+        }
+
+        // Ruta para ver el test de un curso
+        if (path.match(/^\/curso\/\d+\/test$/)) {
+            const courseId = path.split('/')[2];
+            await CourseController.showTest(req, res, { isAuthenticated, userRole, userId, courseId });
             return;
         }
 
@@ -225,7 +232,82 @@ const rutas = async (req, res) => {
         if (path.match(/^\/leccion\/\d+\/completar$/) && req.method === 'POST') {
             const lessonId = path.split('/')[2];
             const ContentController = require('../controllers/ContentController');
-            await ContentController.markAsCompleted(req, res, { lessonId });
+            await ContentController.markAsCompleted(req, res, { userId, lessonId });
+            return;
+        }
+
+        // Ruta para editar una lección
+        if (path.match(/^\/leccion\/\d+\/editar$/) && req.method === "GET") {
+            if (!isAuthenticated || userRole !== "docente") {
+                res.writeHead(403, { "Content-Type": "text/html" });
+                res.end(render("403.html", { title: "Acceso Denegado" }));
+                return;
+            }
+            const lessonId = path.split('/')[2];
+            const LessonController = require('../controllers/LessonController');
+            await LessonController.editLesson(req, res, { isAuthenticated, userRole, lessonId });
+            return;
+        }
+
+        // Ruta para actualizar una lección
+        if (path.match(/^\/leccion\/\d+\/actualizar$/) && req.method === "POST") {
+            if (!isAuthenticated || userRole !== "docente") {
+                res.writeHead(403, { "Content-Type": "text/html" });
+                res.end(render("403.html", { title: "Acceso Denegado" }));
+                return;
+            }
+            const lessonId = path.split('/')[2];
+            const LessonController = require('../controllers/LessonController');
+            await LessonController.updateLesson(req, res, { lessonId });
+            return;
+        }
+
+        // Ruta para eliminar una lección
+        if (path.match(/^\/leccion\/\d+$/) && req.method === "DELETE") {
+            if (!isAuthenticated || userRole !== "docente") {
+                res.writeHead(403, { "Content-Type": "text/html" });
+                res.end(render("403.html", { title: "Acceso Denegado" }));
+                return;
+            }
+            const lessonId = path.split('/')[2];
+            const LessonController = require('../controllers/LessonController');
+            await LessonController.deleteLesson(req, res, { lessonId });
+            return;
+        }
+
+        // Ruta para crear una nueva pregunta
+        if (path.match(/^\/curso\/\d+\/pregunta$/) && req.method === 'POST') {
+            if (!isAuthenticated || userRole !== 'docente') {
+                res.writeHead(403, { 'Content-Type': 'text/html' });
+                res.end(render('403.html', { title: 'Acceso Denegado' }));
+                return;
+            }
+            const courseId = path.split('/')[2];
+            await CourseController.addQuestion(req, res, courseId);
+            return;
+        }
+
+        // Ruta para enviar respuestas del test
+        if (path.match(/^\/curso\/\d+\/respuestas$/) && req.method === 'POST') {
+            if (!isAuthenticated || userRole !== 'estudiante') {
+                res.writeHead(403, { 'Content-Type': 'text/html' });
+                res.end(render('403.html', { title: 'Acceso Denegado' }));
+                return;
+            }
+            const courseId = path.split('/')[2];
+            await CourseController.submitAnswers(req, res, courseId);
+            return;
+        }
+
+        // Ruta para ver resultados del test
+        if (path.match(/^\/curso\/\d+\/resultados$/)) {
+            if (!isAuthenticated) {
+                res.writeHead(403, { 'Content-Type': 'text/html' });
+                res.end(render('403.html', { title: 'Acceso Denegado' }));
+                return;
+            }
+            const courseId = path.split('/')[2];
+            await CourseController.showResults(req, res, { isAuthenticated, userRole, userId, courseId });
             return;
         }
 

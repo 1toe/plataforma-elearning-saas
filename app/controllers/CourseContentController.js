@@ -4,10 +4,8 @@ const Progress = require('../models/Progress');
 const render = require('../utils/render');
 
 const courseContentController = {
-    showCourseContent: async (req, res, { isAuthenticated, userRole, userId }) => {
+    showCourseContent: async (req, res, { isAuthenticated, userRole, userId, courseId }) => {
         try {
-            const courseId = req.params.id;
-            
             // Obtener información del curso
             const curso = await Course.findById(courseId);
             if (!curso) {

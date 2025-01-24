@@ -1,90 +1,88 @@
 const db = require('../data/db');
 
 class Content {
-    static create(contentData) {
+    static async create(contentData) {
         return new Promise((resolve, reject) => {
-            const sql = `
-                INSERT INTO content 
-                (lesson_id, titulo, contenido)
-                VALUES (?, ?, ?)
-            `;
-
+            const { lesson_id, titulo, contenido, orden } = contentData;
             db.run(
-                sql,
-                [
-                    contentData.lesson_id,
-                    contentData.titulo,
-                    contentData.contenido
-                ],
-                function (err) {
-                    if (err) reject(err);
-                    else resolve(this.lastID);
+                'INSERT INTO content (lesson_id, titulo, contenido, orden) VALUES (?, ?, ?, ?)',
+                [lesson_id, titulo, contenido, orden],
+                function(err) {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve(this.lastID);
                 }
             );
         });
     }
 
-    static findByLessonId(lessonId) {
+    static async findById(id) {
         return new Promise((resolve, reject) => {
-            const sql = `
-                SELECT id, titulo, contenido, created_at
-                FROM content
-                WHERE lesson_id = ?
-                ORDER BY created_at ASC
-            `;
-            
-            db.all(sql, [lessonId], (err, rows) => {
-                if (err) reject(err);
-                else resolve(rows);
+            db.get('SELECT * FROM content WHERE id = ?', [id], (err, row) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve(row);
             });
         });
     }
 
-    static findById(id) {
+    static async findByLessonId(lessonId) {
         return new Promise((resolve, reject) => {
-            const sql = `
-                SELECT id, lesson_id, titulo, contenido
-                FROM content
-                WHERE id = ?
-            `;
-            
-            db.get(sql, [id], (err, row) => {
-                if (err) reject(err);
-                else resolve(row);
-            });
-        });
-    }
-
-    static update(id, contentData) {
-        return new Promise((resolve, reject) => {
-            const sql = `
-                UPDATE content
-                SET titulo = ?, contenido = ?
-                WHERE id = ?
-            `;
-
-            db.run(
-                sql,
-                [
-                    contentData.titulo,
-                    contentData.contenido,
-                    id
-                ],
-                function (err) {
-                    if (err) reject(err);
-                    else resolve(this.changes);
+            db.all(
+                'SELECT id, titulo, contenido, orden FROM content WHERE lesson_id = ? ORDER BY orden ASC',
+                [lessonId],
+                (err, rows) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve(rows);
                 }
             );
         });
     }
 
-    static delete(id) {
+    static async update(id, contentData) {
         return new Promise((resolve, reject) => {
-            const sql = 'DELETE FROM content WHERE id = ?';
-            
-            db.run(sql, [id], function (err) {
-                if (err) reject(err);
-                else resolve(this.changes);
+            const { titulo, contenido, orden } = contentData;
+            db.run(
+                'UPDATE content SET titulo = ?, contenido = ?, orden = ? WHERE id = ?',
+                [titulo, contenido, orden, id],
+                (err) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve();
+                }
+            );
+        });
+    }
+
+    static async delete(id) {
+        return new Promise((resolve, reject) => {
+            db.run('DELETE FROM content WHERE id = ?', [id], (err) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve();
+            });
+        });
+    }
+
+    static async deleteByLessonId(lessonId) {
+        return new Promise((resolve, reject) => {
+            db.run('DELETE FROM content WHERE lesson_id = ?', [lessonId], (err) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve();
             });
         });
     }

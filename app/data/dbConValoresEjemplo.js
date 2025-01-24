@@ -9,6 +9,9 @@
  * - contents: Almacena el contenido de cada lección.
  * - enrollments: Almacena la inscripción de los usuarios en los cursos.
  * - progress: Almacena el progreso de los usuarios en las lecciones.
+ * - questions: Almacena las preguntas de los tests.
+ * - answers: Almacena las respuestas de los tests.
+ * - student_answers: Almacena las respuestas de los estudiantes a las preguntas de los tests.
  * 
  * @module db // Exporta la conexión con la base de datos SQLite.
  */
@@ -106,6 +109,48 @@ const initDB = () => {
             )
         `);
 
+        // Crear tabla 'questions'
+        db.run(`
+            CREATE TABLE IF NOT EXISTS questions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                course_id INTEGER NOT NULL,
+                question_text TEXT NOT NULL,
+                question_type TEXT CHECK(question_type IN ('multiple_choice', 'true_false', 'open')) NOT NULL,
+                points INTEGER DEFAULT 1,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+            )
+        `);
+
+        // Crear tabla 'answers'
+        db.run(`
+            CREATE TABLE IF NOT EXISTS answers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                question_id INTEGER NOT NULL,
+                answer_text TEXT NOT NULL,
+                is_correct BOOLEAN NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
+            )
+        `);
+
+        // Crear tabla 'student_answers'
+        db.run(`
+            CREATE TABLE IF NOT EXISTS student_answers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_id INTEGER NOT NULL,
+                question_id INTEGER NOT NULL,
+                answer_id INTEGER,
+                answer_text TEXT,
+                is_correct BOOLEAN,
+                points_earned INTEGER DEFAULT 0,
+                submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE,
+                FOREIGN KEY (answer_id) REFERENCES answers(id) ON DELETE CASCADE
+            )
+        `);
+
         // Insertar datos de ejemplo
         db.parallelize(() => {
             // Insertar profesores
@@ -177,6 +222,37 @@ const initDB = () => {
                 (5, 2, false, CURRENT_TIMESTAMP),
                 (6, 5, true, CURRENT_TIMESTAMP),
                 (6, 6, false, CURRENT_TIMESTAMP)`);
+
+            // Insertar preguntas de ejemplo
+            db.run(`INSERT OR IGNORE INTO questions (course_id, question_text, question_type) VALUES 
+                (1, '¿En qué ciudad se originó el jazz?', 'multiple_choice'),
+                (1, '¿Quién es considerado el "Rey del Swing"?', 'multiple_choice'),
+                (1, '¿Qué músico es conocido como el padre del Cool Jazz?', 'multiple_choice'),
+                (2, '¿Cuál es el modo más común usado en improvisación de jazz?', 'multiple_choice'),
+                (2, '¿Qué escala es fundamental para improvisar en blues?', 'multiple_choice')`);
+
+            // Insertar respuestas de ejemplo
+            db.run(`INSERT OR IGNORE INTO answers (question_id, answer_text, is_correct) VALUES 
+                (1, 'Nueva Orleans', true),
+                (1, 'Chicago', false),
+                (1, 'Nueva York', false),
+                (1, 'Memphis', false),
+                (2, 'Benny Goodman', true),
+                (2, 'Duke Ellington', false),
+                (2, 'Count Basie', false),
+                (2, 'Glenn Miller', false),
+                (3, 'Miles Davis', true),
+                (3, 'Charlie Parker', false),
+                (3, 'John Coltrane', false),
+                (3, 'Dizzy Gillespie', false),
+                (4, 'Modo Dórico', true),
+                (4, 'Modo Locrio', false),
+                (4, 'Modo Frigio', false),
+                (4, 'Modo Lidio', false),
+                (5, 'Escala Pentatónica', true),
+                (5, 'Escala Cromática', false),
+                (5, 'Escala Disminuida', false),
+                (5, 'Escala Alterada', false)`);
         });
 
         console.log("Base de datos inicializada con datos de ejemplo.");

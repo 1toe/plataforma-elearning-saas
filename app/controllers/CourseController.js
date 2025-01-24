@@ -75,26 +75,38 @@ const courseController = {
 
     showTest: async (req, res, { isAuthenticated, userRole, courseId }) => {
         try {
+            // Obtener el curso
             const course = await Course.findById(courseId);
-            const questions = await Question.findByCourseId(courseId);
-            
-            for (let question of questions) {
-                question.answers = await Answer.findByQuestionId(question.id);
+            if (!course) {
+                res.writeHead(404, { 'Content-Type': 'text/plain' });
+                res.end('Curso no encontrado');
+                return;
             }
 
-            const html = render("test-curso.html", {
+            // Obtener preguntas del curso
+            const questions = await Question.findByCourseId(courseId) || [];
+            console.log('Preguntas encontradas:', questions);
+
+            // Para cada pregunta, obtener sus respuestas
+            const questionsWithAnswers = await Promise.all(questions.map(async (question) => {
+                const answers = await Answer.findByQuestionId(question.id) || [];
+                return { ...question, answers };
+            }));
+
+            // Renderizar la vista
+            const html = render('test-curso.html', {
+                title: `Test - ${course.nombre}`,
                 curso: course,
-                questions: questions,
-                isTeacher: userRole === 'docente',
-                isStudent: userRole === 'estudiante'
+                questions: JSON.stringify(questionsWithAnswers),
+                isTeacher: userRole === 'docente'
             }, isAuthenticated, userRole);
 
-            res.writeHead(200, { "Content-Type": "text/html" });
+            res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end(html);
         } catch (error) {
             console.error('Error al mostrar test:', error);
-            res.writeHead(500, { "Content-Type": "text/plain" });
-            res.end("Error interno del servidor");
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Error interno del servidor');
         }
     },
 
@@ -114,7 +126,7 @@ const courseController = {
                 };
 
                 await Question.create(questionData);
-                res.writeHead(302, { Location: `/curso/${courseId}/test` });
+                res.writeHead(302, { Location: `/cursos/${courseId}/test` });
                 res.end();
             } catch (error) {
                 console.error('Error al crear pregunta:', error);
