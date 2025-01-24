@@ -1,0 +1,131 @@
+<script>
+        // Variables globales
+    let preguntas = [];
+    try {
+        preguntas = JSON.parse("{{preguntas}}".replace(/\\/g, ''));
+        } catch (e) {
+        console.error('Error al parsear preguntas:', e);
+    preguntas = [];
+        }
+    const isTeacher = "{{ isTeacher }}" === "true";
+
+    // Función de inicialización
+    function initializePage() {
+            const mensajeNoPreguntas = document.getElementById('mensajeNoPreguntas');
+    const testForm = document.getElementById('testForm');
+
+    if (!preguntas || preguntas.length === 0) {
+        mensajeNoPreguntas.style.display = 'block';
+    testForm.style.display = 'none';
+            } else {
+        mensajeNoPreguntas.style.display = 'none';
+    testForm.style.display = 'block';
+    renderPreguntas();
+            }
+
+    if (isTeacher) {
+        setupTeacherControls();
+            }
+        }
+
+    // Función para renderizar las preguntas
+    function renderPreguntas() {
+            const preguntasContainer = document.getElementById('preguntasContainer');
+    preguntasContainer.innerHTML = '';
+
+            preguntas.forEach((pregunta, index) => {
+                const preguntaDiv = document.createElement('div');
+    preguntaDiv.className = 'question-container';
+
+    // Determinar si es pregunta de verdadero/falso o múltiple opción
+    const isTrueFalse = pregunta.question_type === 'true_false';
+
+    preguntaDiv.innerHTML = `
+    <div class="question-text">
+        ${index + 1}. ${pregunta.question_text}
+    </div>
+    <div class="options-container">
+        ${pregunta.respuestas.map((respuesta, rIndex) => `
+                            <div class="form-check">
+                                <input class="form-check-input" type="${isTrueFalse ? 'radio' : 'radio'}" 
+                                    name="question_${pregunta.id}" 
+                                    id="q${pregunta.id}_r${rIndex}"
+                                    value="${respuesta.id}" required>
+                                <label class="form-check-label" for="q${pregunta.id}_r${rIndex}">
+                                    ${respuesta.answer_text}
+                                </label>
+                            </div>
+                        `).join('')}
+    </div>
+    `;
+    preguntasContainer.appendChild(preguntaDiv);
+            });
+        }
+
+    // Configuración de controles para profesores
+    function setupTeacherControls() {
+            const questionType = document.getElementById('questionType');
+    const opcionesContainer = document.getElementById('opcionesContainer');
+
+    questionType.addEventListener('change', function() {
+        opcionesContainer.innerHTML = '';
+    if (this.value === 'true_false') {
+        opcionesContainer.innerHTML = `
+                        <div class="mb-3">
+                            <label class="form-label">Opciones</label>
+                            <div class="form-check mb-2">
+                                <input type="radio" class="form-check-input" name="correct_answer" value="0" required>
+                                <input type="text" class="form-control" name="answers[]" value="Verdadero" readonly>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input type="radio" class="form-check-input" name="correct_answer" value="1" required>
+                                <input type="text" class="form-control" name="answers[]" value="Falso" readonly>
+                            </div>
+                        </div>
+                    `;
+                } else {
+        opcionesContainer.innerHTML = `
+                        <div class="mb-3">
+                            <label class="form-label">Opciones de Respuesta</label>
+                            <div class="option-group mb-2">
+                                <div class="input-group">
+                                    <div class="input-group-text">
+                                        <input type="radio" name="correct_answer" value="0" required>
+                                    </div>
+                                    <input type="text" class="form-control" name="answers[]" required>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="agregarOpcion()">
+                                <i class="bi bi-plus-circle me-2"></i>Agregar Opción
+                            </button>
+                        </div>
+                    `;
+                }
+            });
+
+    // Trigger initial render
+    questionType.dispatchEvent(new Event('change'));
+        }
+
+    // Función para agregar una nueva opción (solo para multiple choice)
+    function agregarOpcion() {
+            const container = document.querySelector('#opcionesContainer .mb-3');
+    const newOption = document.createElement('div');
+    newOption.className = 'option-group mb-2';
+    newOption.innerHTML = `
+    <div class="input-group">
+        <div class="input-group-text">
+            <input type="radio" name="correct_answer" value="${container.children.length - 1}" required>
+        </div>
+        <input type="text" class="form-control" name="answers[]" required>
+            <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.parentElement.remove()">
+                <i class="bi bi-trash"></i>
+            </button>
+    </div>
+    `;
+    container.insertBefore(newOption, container.lastElementChild);
+        }
+
+    // Inicializar la página cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', initializePage);
+</script>

@@ -46,10 +46,10 @@
 
                 <!-- Navegación entre lecciones -->
                 <div class="d-flex justify-content-between mt-4">
-                    <a id="prevLeccionBtn" href="#" class="btn btn-outline-primary" style="visibility: hidden">
+                    <a id="prevLeccionBtn" href="#" class="btn btn-outline-primary" style="visibility: visible">
                         <i class="bi bi-arrow-left me-2"></i>Lección anterior
                     </a>
-                    <a id="nextLeccionBtn" href="#" class="btn btn-outline-primary" style="visibility: hidden">
+                    <a id="nextLeccionBtn" href="#" class="btn btn-outline-primary" style="visibility: visible">
                         Siguiente lección<i class="bi bi-arrow-right ms-2"></i>
                     </a>
                 </div>
@@ -90,12 +90,12 @@
     <script>
         // Variables globales
         const isTeacher = '{{isTeacher}}' === 'true';
-        const contenidos = JSON.parse('{{contenidos}}');
-        const leccion = JSON.parse('{{leccion}}');
-        const leccionAnterior = '{{leccionAnterior}}' !== 'null' ? JSON.parse('{{leccionAnterior}}') : null;
-        const leccionSiguiente = '{{leccionSiguiente}}' !== 'null' ? JSON.parse('{{leccionSiguiente}}') : null;
+        const contenidos = JSON.parse('{{contenidos | safe}}');
+        const leccion = JSON.parse('{{leccion | safe}}');
+        const leccionAnterior = '{{leccionAnterior}}' !== 'null' ? JSON.parse('{{leccionAnterior | safe}}') : null;
+        const leccionSiguiente = '{{leccionSiguiente}}' !== 'null' ? JSON.parse('{{leccionSiguiente | safe}}') : null;
         const isCompleted = '{{isCompleted}}' === 'true';
-        const curso = JSON.parse('{{curso}}');
+        const curso = JSON.parse('{{curso | safe}}');
         console.log(curso); // Verifica que el objeto curso tenga la propiedad nombre
 
         // Inicializar la página
@@ -146,26 +146,16 @@
                     <div class="contenido-item mb-4">
                         <h6 class="mb-2">${contenido.titulo}</h6>
                         <div class="contenido-texto">
-                            ${contenido.contenido || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'}
+                            ${contenido.contenido}
                         </div>
-                        <ul class="mt-3">
-                            <li>Punto clave 1: Lorem ipsum dolor sit amet</li>
-                            <li>Punto clave 2: Consectetur adipiscing elit</li>
-                            <li>Punto clave 3: Sed do eiusmod tempor</li>
-                        </ul>
                     </div>
                 `).join('');
             } else {
                 contenidoContainer.innerHTML = `
                     <div class="contenido-item mb-4">
                         <div class="contenido-texto">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                            No hay contenido disponible para esta lección.
                         </div>
-                        <ul class="mt-3">
-                            <li>Punto clave 1: Lorem ipsum dolor sit amet</li>
-                            <li>Punto clave 2: Consectetur adipiscing elit</li>
-                            <li>Punto clave 3: Sed do eiusmod tempor</li>
-                        </ul>
                     </div>
                 `;
             }
