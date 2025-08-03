@@ -1,6 +1,5 @@
 # Elearn
 
-## Descripción
 Plataforma de aprendizaje en línea diseñada para facilitar la creación, gestión y consumo de contenido educativo. El proyecto está construido con tecnologías modernas pero sin depender de frameworks pesados, lo que lo hace ligero y fácil de mantener. La plataforma permite a los usuarios (tanto estudiantes como docentes) interactuar con cursos, lecciones y evaluaciones de manera eficiente.
 
 ## Estructura del Proyecto
@@ -77,33 +76,3 @@ node server.js
 # Abre tu navegador y visita:
 http://localhost:3000
 ```
-
-## Mejoras Futuras
-- Autenticación de dos factores.
-- Sistema de notificaciones.
-- Integración con archivos multimedia.
-- Refinamiento de la interfaz de usuario.
-- Implementación de API REST.
-
-## Ejemplo de Uso
-### Creación de un Nuevo Curso
-Formulario intuitivo para docentes con generación automática de código único.
-
-
-### Realización de Tests
-Tests finales con retroalimentación inmediata y análisis de resultados para docentes.
-
-## Conclusión
-Elearn es una plataforma robusta y flexible, ideal para instituciones educativas, empresas y educadores independientes. Su enfoque en simplicidad, seguridad y escalabilidad lo posiciona como una herramienta transformadora en el aprendizaje digital.
-
-## Ventajas Clave
-1. **Facilidad de Uso**: Interfaz intuitiva.
-2. **Flexibilidad**: Adaptación a diferentes estilos de enseñanza.
-3. **Escalabilidad**: Arquitectura ligera para crecimiento sostenido.
-4. **Personalización**: Expansión modular sin frameworks pesados.
-5. **Seguridad**: Protección de datos y roles definidos.
-
-## Casos de Uso
-- Instituciones educativas.
-- Formación interna en empresas.
-- Educadores independientes.
