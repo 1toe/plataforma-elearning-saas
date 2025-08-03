@@ -1,4 +1,4 @@
-# Elearn
+# Learn With You
 
 Plataforma de aprendizaje en línea diseñada para facilitar la creación, gestión y consumo de contenido educativo. El proyecto está construido con tecnologías modernas pero sin depender de frameworks pesados, lo que lo hace ligero y fácil de mantener. La plataforma permite a los usuarios (tanto estudiantes como docentes) interactuar con cursos, lecciones y evaluaciones de manera eficiente.
 
