@@ -1,7 +1,7 @@
 # Elearn
 
 ## Descripción
-Elearn es una plataforma de aprendizaje en línea diseñada para facilitar la creación, gestión y consumo de contenido educativo. El proyecto está construido con tecnologías modernas pero sin depender de frameworks pesados, lo que lo hace ligero y fácil de mantener. La plataforma permite a los usuarios (tanto estudiantes como docentes) interactuar con cursos, lecciones y evaluaciones de manera eficiente.
+Plataforma de aprendizaje en línea diseñada para facilitar la creación, gestión y consumo de contenido educativo. El proyecto está construido con tecnologías modernas pero sin depender de frameworks pesados, lo que lo hace ligero y fácil de mantener. La plataforma permite a los usuarios (tanto estudiantes como docentes) interactuar con cursos, lecciones y evaluaciones de manera eficiente.
 
 ## Estructura del Proyecto
 El proyecto sigue una estructura modular que facilita su mantenimiento y expansión. La organización de los archivos y directorios está pensada para separar claramente las responsabilidades de cada componente:
